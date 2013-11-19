@@ -1,6 +1,22 @@
 var request = require('request');
-var config = require('../config.js');
-var API_KEY = config.echonestApiKey;
+var API_KEY;
+
+try { 
+	var exists = require.resolve( name );
+	if (exists) {
+		var config = require('../config.js');
+		API_KEY = config.echonestApiKey;
+	} else {
+		//echonest default
+		API_KEY = "FILDTEOIK2HBORODV";	
+	}
+}
+catch( e ) { 
+	//echonest default
+	API_KEY = "FILDTEOIK2HBORODV";
+}
+
+
 
 function similarArtistNames(query, callback, error) {
 	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=20&start=0&name=" + query;
