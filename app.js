@@ -7,7 +7,9 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , echonest = require('./routes/echonest')
+  , spotify = require('./routes/spotify');
 
 var app = express();
 
@@ -27,6 +29,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+app.get('/suggest', echonest.suggest);
+app.get('/getArtist', spotify.getArtist);
 app.get('/', routes.index);
 app.get('/users', user.list);
 

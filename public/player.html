@@ -1,0 +1,124 @@
+<html>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script>
+
+    $(
+    	function() {
+		    
+		    $("#artist_search").autocomplete(
+		    	{
+		    		'source': getSuggestions,
+		    		'select': menuUsedForSelection
+		    	}
+		    ).keypress(
+		    	function(e) {
+		    		if (e.keyCode === 13) {
+		    			enterUsedForSelection();		    			
+			    	}
+			    }
+			);
+		}
+	);
+
+	//search
+
+    function getSuggestions(event, callback) {
+    	var query = $("#artist_search").val();
+    	console.log(query);  
+
+    	var uri = "suggest?q=" + query;
+
+    	var xhr = $.ajax( uri )
+		.done(
+			function (data) {
+				console.log(data);    				
+				callback(data);
+			}
+		).fail(
+			function (e) {
+				alert("FAIL");
+				alert(e);
+				callback([]);
+			}
+		);
+    }
+
+    function getArtistSpotifyInfo(query, callback, error) {
+    	var uri = "getArtist?q=" + query;
+
+    	var xhr = $.ajax( uri )
+		.done(
+			function (data) {
+				console.log(data);    				
+				callback(data);
+			}
+		).fail(
+			function (e) {
+				alert("FAIL");
+				alert(e);
+				callback([]);
+			}
+		);	
+    }
+
+    function updatePlayer(spotifyUri) {
+    	var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
+    	console.log(uri);
+    	$("#spotify_widget").attr('src', uri);
+    }
+
+    function loadArtist(query) {
+    	getArtistSpotifyInfo (
+    		query,
+    		function (artists) {
+    			console.log(artists);
+    			var artist = artists[0];
+    			var artistUri = artist.href;
+    			console.log(artistUri);
+    			updatePlayer(artistUri);
+    		},
+    		function(e) {
+    			console.log(e);
+    			alrert(e);
+    		}
+    	);
+    }
+
+    function useSelection(query) {
+    	console.log("Got to USE SELECTION");
+    	console.log(query);
+    	loadArtist(query);
+    }
+
+    function menuUsedForSelection(event, ui) {
+    	var query = ui.item.value;
+    	console.log(query);
+    	useSelection(query);
+    }
+
+    function enterUsedForSelection() {
+    	var query = $("#artist_search").val();
+    	$("#artist_search").autocomplete("close");
+    	console.log("Manually closed menu");
+    	useSelection(query);
+    }
+
+	</script>
+
+	<body>
+
+		<input id="artist_search" name="artist_search" type="text" value="" dir="ltr" spellcheck="false" />
+
+		<br /><br /><br />
+
+		<iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:6olE6TJLqED3rqDCT0FyPh" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+
+	</body>
+</html>
+
+
+
+
+
