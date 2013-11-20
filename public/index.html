@@ -7,6 +7,8 @@
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<script>
 
+    var DavesMusicThing = {};
+
     $(
     	function() {
 		    
@@ -158,8 +160,24 @@
 		$("#similar_artists").find("tr").remove(); 		
 	}
 
+    function artistHasSpotifyListings(artist) {
+        if (!("foreign_ids" in artist )) return false;
+        for (var i = 0; i < artist.foreign_ids.length; i++) {
+            if (artist.foreign_ids[i].catalog === "spotify-WW") return true;
+        };
+        return false;
+    }
+
+    function getSimilarArtistsPlayButtonHtml(artist) {
+        if (artistHasSpotifyListings(artist)) {
+            return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Play</a>';
+        } else {
+            return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Show</a>';
+        }
+    }
+
     function getSimilarArtistsHtml(artist) {
-    	return '<tr><td>' + artist + '</td><td><a href="#" onclick="javascript:makeSelection(' + "'" + artist + "'" + '); return false;">Play</a></td></tr>';
+    	return '<tr><td>' + artist.name + '</td><td>' + getSimilarArtistsPlayButtonHtml(artist) + '</td></tr>';
     }
 
     function showSimilarArtists(artists) {
@@ -167,6 +185,7 @@
     	var totalHtml = "";
     	for (var i = 0; i < artists.length; i++) {
     		var artist = artists[i];    		
+            artist.similarArtistIndex = i;
     		totalHtml += getSimilarArtistsHtml(artist);
     	};
     	$("#similar_artists > tbody:last").after(totalHtml);
@@ -175,6 +194,10 @@
     function loadSimilarArtists(query) {
     	getSimilarArtists(
     		function(artists) {
+                DavesMusicThing.similarArtists = artists;
+                for (var i = 0; i < artists.length; i++) {
+                    artists[i].similarArtistIndex = i;            
+                };
     			console.log(artists);
     			showSimilarArtists(artists);
     		},

@@ -3,12 +3,15 @@ var config = require('../config.js');
 var API_KEY = config.echonestApiKey;
 //default key = "FILDTEOIK2HBORODV"
 
-
-function similarArtistNames(callback, error, query, limit, start) {
+function similarArtists(callback, error, query, limit, start) {
 	if (!limit) { limit = 30; }
 	if (!start) { start = 0; }
 
-	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=" + limit + "&start=" + start + "&name=" + query;
+	if (query.charAt(0) != '"') {
+		query = '"' + query + '"';
+	}
+
+	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=" + limit + "&start=" + start + "&name=" + query + "&bucket=id:spotify-WW";
 	console.log(uri);
 
 	request.get(
@@ -25,18 +28,32 @@ function similarArtistNames(callback, error, query, limit, start) {
 				return;
 			}
 
-			var artists = [];
-
-			for (var i = 0; i < body.response.artists.length; i++) {
-				artists.push(body.response.artists[i].name);
-			}
-
-			callback(artists);
+			callback(body.response.artists);
 		}
 	);
 }
-exports.similarArtistNames = similarArtistNames;
+exports.similarArtists = similarArtists;
 //{"response": {"status": {"version": "4.2", "code": 0, "message": "Success"}, "artists": [{"id": "ARH1N081187B9AC562", "name": "Thom Yorke"}, {"id": "ARW64KS1187FB3C94D", "name": "Doves"}, {"id": "AR0L04E1187B9AE90C", "name": "The Verve"}, {"id": "ARTNON61187B98D6EE", "name": "Elbow"}, {"id": "ARZ0RS81187B98F252", "name": "Mercury Rev"}, {"id": "ARKVITV1187B9AE854", "name": "Blur"}, {"id": "ARZNOIY1187B989D9C", "name": "On a Friday"}, {"id": "ARR3ONV1187B9A2F59", "name": "Muse"}, {"id": "ARIIMPS1187FB4CD03", "name": "Richard Ashcroft"}, {"id": "ARGEJ8B1187B9AE2E7", "name": "Manic Street Preachers"}, {"id": "ARG7LMD1187FB4B064", "name": "Mansun"}, {"id": "ARJ7KF01187B98D717", "name": "Coldplay"}, {"id": "ARHRMYH1187B9A675B", "name": "Mew"}, {"id": "ARA1OFS1187B9AE656", "name": "British Sea Power"}, {"id": "ARC2XR11187FB5CC95", "name": "Beck"}, {"id": "ARHHUDL1187B997966", "name": "Keane"}, {"id": "ARCMOKD1187B9AEB21", "name": "Starsailor"}, {"id": "ARNVCB81187B9ACBDF", "name": "The Flaming Lips"}, {"id": "AR2A6UJ1187FB4BF5C", "name": "The Good, the Bad & the Queen"}, {"id": "ARDW3YJ1187FB4CCE5", "name": "Athlete"}]}}
+
+function similarArtistNames(callback, error, query, limit, start) {
+	similarArtists(
+		function(artists) {
+			var artistNames = [];
+
+			for (var i = 0; i < artists.length; i++) {
+				artistNames.push(artists[i].name);
+			}
+
+			callback(artistNames);	
+		},
+		error,
+		query,
+		limit,
+		start
+	);
+}
+exports.similarArtistNames = similarArtistNames;
+
 
 function suggestArtists(callback, error, query, limit, start) {
 	if (!limit) { limit = 30; }

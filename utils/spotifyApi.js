@@ -1,6 +1,9 @@
 var request = require("request");
 
 function searchForTrack(query, callback, error) {
+	if (query.charAt(0) != '"') {
+		query = '"' + query + '"';
+	}
 	var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
 
 	request.get(
@@ -18,6 +21,9 @@ function searchForTrack(query, callback, error) {
 exports.searchForTrack = searchForTrack;
 
 function searchForArtist(query, callback, error) {
+	if (query.charAt(0) != '"') {
+		query = '"' + query + '"';
+	}
 	var uri = "http://ws.spotify.com/search/1/artist.json?q=" + query;
 
 	request.get(
