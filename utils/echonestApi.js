@@ -2,7 +2,7 @@ var request = require('request');
 var API_KEY;
 
 try { 
-	var exists = require.resolve( name );
+	var exists = require.resolve('../config.js');
 	if (exists) {
 		var config = require('../config.js');
 		API_KEY = config.echonestApiKey;
@@ -17,9 +17,12 @@ catch( e ) {
 }
 
 
+function similarArtistNames(callback, error, query, limit, start) {
+	if (!limit) { limit = 30; }
+	if (!start) { start = 0; }
 
-function similarArtistNames(query, callback, error) {
-	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=20&start=0&name=" + query;
+	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=" + limit + "&start=" + start + "&name=" + query;
+	console.log(uri);
 
 	request.get(
 		uri,
@@ -30,6 +33,11 @@ function similarArtistNames(query, callback, error) {
 			}
 
 			var body = JSON.parse(rawBody);
+			if (body.response.status.code === 2) {
+				error(body.response.status.message);
+				return;
+			}
+
 			var artists = [];
 
 			for (var i = 0; i < body.response.artists.length; i++) {
@@ -43,7 +51,10 @@ function similarArtistNames(query, callback, error) {
 exports.similarArtistNames = similarArtistNames;
 //{"response": {"status": {"version": "4.2", "code": 0, "message": "Success"}, "artists": [{"id": "ARH1N081187B9AC562", "name": "Thom Yorke"}, {"id": "ARW64KS1187FB3C94D", "name": "Doves"}, {"id": "AR0L04E1187B9AE90C", "name": "The Verve"}, {"id": "ARTNON61187B98D6EE", "name": "Elbow"}, {"id": "ARZ0RS81187B98F252", "name": "Mercury Rev"}, {"id": "ARKVITV1187B9AE854", "name": "Blur"}, {"id": "ARZNOIY1187B989D9C", "name": "On a Friday"}, {"id": "ARR3ONV1187B9A2F59", "name": "Muse"}, {"id": "ARIIMPS1187FB4CD03", "name": "Richard Ashcroft"}, {"id": "ARGEJ8B1187B9AE2E7", "name": "Manic Street Preachers"}, {"id": "ARG7LMD1187FB4B064", "name": "Mansun"}, {"id": "ARJ7KF01187B98D717", "name": "Coldplay"}, {"id": "ARHRMYH1187B9A675B", "name": "Mew"}, {"id": "ARA1OFS1187B9AE656", "name": "British Sea Power"}, {"id": "ARC2XR11187FB5CC95", "name": "Beck"}, {"id": "ARHHUDL1187B997966", "name": "Keane"}, {"id": "ARCMOKD1187B9AEB21", "name": "Starsailor"}, {"id": "ARNVCB81187B9ACBDF", "name": "The Flaming Lips"}, {"id": "AR2A6UJ1187FB4BF5C", "name": "The Good, the Bad & the Queen"}, {"id": "ARDW3YJ1187FB4CCE5", "name": "Athlete"}]}}
 
-function suggestArtists(query, callback, error) {
+function suggestArtists(callback, error, query, limit, start) {
+	if (!limit) { limit = 30; }
+	if (!start) { start = 0; }
+
 	var uri = "http://developer.echonest.com/api/v4/artist/suggest?api_key=" + API_KEY + "&results=20&name=" + query;
 
 	request.get(

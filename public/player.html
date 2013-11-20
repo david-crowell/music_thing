@@ -45,8 +45,26 @@
 		);
     }
 
-    function getArtistSpotifyInfo(query, callback, error) {
-    	var uri = "getArtist?q=" + query;
+    function getArtistSpotifyInfo(callback, error, query) {
+    	var uri = "artist?q=" + query;
+
+    	var xhr = $.ajax( uri )
+		.done(
+			function (data) {
+				console.log(data);    				
+				callback(data);
+			}
+		).fail(
+			function (e) {
+				alert("FAIL");
+				alert(e);
+				callback([]);
+			}
+		);	
+    }
+
+    function getSimilarArtists(callback, error, query) {
+    	var uri = "similar?q=" + query;
 
     	var xhr = $.ajax( uri )
 		.done(
@@ -69,22 +87,37 @@
     	$("#spotify_widget").attr('src', uri);
     }
 
+    function matchArtist(query, artists) {
+    	var bestGuess = artists[0];
+    	for (var i = artists.length - 1; i >= 0; i--) {
+    		if (artists[i].name === query) {
+    			bestGuess = artists[i];
+    		}
+    	};
+    	return bestGuess;
+    }
+
     function loadArtist(query) {
-    	getArtistSpotifyInfo (
-    		query,
+    	getArtistSpotifyInfo (    	
     		function (artists) {
     			console.log(artists);
-    			var artist = artists[0];
+    			var artist = matchArtist(query, artists);
     			var artistUri = artist.href;
     			console.log(artistUri);
     			updatePlayer(artistUri);
+    			clearSimilarArtists();
+    			loadSimilarArtists(
+    				artist.name
+    			);
     		},
     		function(e) {
     			console.log(e);
     			alrert(e);
-    		}
+    		},
+    		query
     	);
     }
+
 
     function useSelection(query) {
     	console.log("Got to USE SELECTION");
@@ -105,6 +138,44 @@
     	useSelection(query);
     }
 
+	function makeSelection(query) {
+		console.log("makeSelection");
+		$("#artist_search").autocomplete("close");
+		$("#artist_search").val(query);
+		useSelection(query);
+	}
+
+	function clearSimilarArtists() {
+		$("#similar_artists").find("tr").remove(); 		
+	}
+
+    function getSimilarArtistsHtml(artist) {
+    	return '<tr><td>' + artist + '</td><td><a href="#" onclick="javascript:makeSelection(' + "'" + artist + "'" + '); return false;">Play</a></td></tr>';
+    }
+
+    function showSimilarArtists(artists) {
+    	clearSimilarArtists();
+    	var totalHtml = "";
+    	for (var i = 0; i < artists.length; i++) {
+    		var artist = artists[i];    		
+    		totalHtml += getSimilarArtistsHtml(artist);
+    	};
+    	$("#similar_artists > tbody:last").after(totalHtml);
+    }
+
+    function loadSimilarArtists(query) {
+    	getSimilarArtists(
+    		function(artists) {
+    			console.log(artists);
+    			showSimilarArtists(artists);
+    		},
+    		function(e) {
+    			console.log("oops");
+    		},
+    		query
+    	);
+    }
+
 	</script>
 
 	<body>
@@ -114,6 +185,11 @@
 		<br /><br /><br />
 
 		<iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:6olE6TJLqED3rqDCT0FyPh" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+
+		<table id="similar_artists">
+			<tbody>
+			</tbody>
+		</table>
 
 	</body>
 </html>

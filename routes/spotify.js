@@ -1,6 +1,6 @@
 var spotifyApi = require('../utils/spotifyApi.js');
 
-function getArtist(request, response) {
+function artist(request, response) {
 	var query = request.query.q;
 
 	spotifyApi.searchForArtist(
@@ -16,4 +16,4 @@ function getArtist(request, response) {
 		}
 	);
 }
-exports.getArtist = getArtist;
+exports.artist = artist;

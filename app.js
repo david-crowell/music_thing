@@ -31,7 +31,8 @@ app.configure('development', function(){
 });
 
 app.get('/suggest', echonest.suggest);
-app.get('/getArtist', spotify.getArtist);
+app.get('/similar', echonest.similar);
+app.get('/artist', spotify.artist);
 app.get('/', routes.index);
 app.get('/users', user.list);
 
