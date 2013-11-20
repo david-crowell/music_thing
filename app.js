@@ -33,7 +33,6 @@ app.configure('development', function(){
 app.get('/suggest', echonest.suggest);
 app.get('/similar', echonest.similar);
 app.get('/artist', spotify.artist);
-app.get('/', routes.index);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
