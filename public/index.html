@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html>
+    <link rel="stylesheet" href="stylesheets/style.css" />
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -186,14 +187,20 @@
 
 		<br /><br /><br />
 
-		<iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:6olE6TJLqED3rqDCT0FyPh" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>        
+        <div class="clear">
+            <div id="leftcolumn">
+    		  <iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:6olE6TJLqED3rqDCT0FyPh" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>    
+            </div>    
 
-		<table id="similar_artists">
-			<tbody>
-			</tbody>
-		</table>
+            <div id="rightcolumn">
+        		<table id="similar_artists">
+        			<tbody>
+        			</tbody>
+        		</table>
 
-        <br /><a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
+                <a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
+            </div>
+        </div>
 
 	</body>
 </html>

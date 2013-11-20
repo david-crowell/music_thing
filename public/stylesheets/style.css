@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+.clear { clear: both;}			
+
+#leftcolumn { width: 350px; border: 0px; float: left}
+#rightcolumn { width: 350px; border: 0px; float: left}
