@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('../testconfig.js');
+var config = require('../config.js');
 var API_KEY = config.echonestApiKey;
 //default key = "FILDTEOIK2HBORODV"
 
