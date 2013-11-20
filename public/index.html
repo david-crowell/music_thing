@@ -5,6 +5,7 @@
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="js/utils.js"></script>
 	<script>
 
     var DavesMusicThing = {};
@@ -30,6 +31,7 @@
     $(document).ready( 
         function() {
             enterUsedForSelection();
+            console.log(fixSuffixedThe("Beatles, the"));
         }
     );
 
@@ -92,6 +94,24 @@
 		);	
     }
 
+    function getPerformances(callback, error, query) {
+        var uri = "events?q=" + query;
+
+        var xhr = $.ajax( uri )
+        .done(
+            function (data) {
+                console.log(data);                  
+                callback(data);
+            }
+        ).fail(
+            function (e) {
+                alert("FAIL");
+                alert(e);
+                callback([]);
+            }
+        );  
+    }
+
     function updatePlayer(spotifyUri) {
     	var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
     	console.log(uri);
@@ -117,9 +137,8 @@
     			console.log(artistUri);
     			updatePlayer(artistUri);
     			clearSimilarArtists();
-    			loadSimilarArtists(
-    				artist.name
-    			);
+    			loadSimilarArtists(artist.name);
+                loadPerformances(artist.name);
     		},
     		function(e) {
     			console.log(e);
@@ -177,7 +196,7 @@
     }
 
     function getSimilarArtistsHtml(artist) {
-    	return '<tr><td>' + artist.name + '</td><td>' + getSimilarArtistsPlayButtonHtml(artist) + '</td></tr>';
+    	return '<tr class="border_bottom"><td>' + artist.name + '</td><td>' + getSimilarArtistsPlayButtonHtml(artist) + '</td></tr>';
     }
 
     function showSimilarArtists(artists) {
@@ -208,28 +227,95 @@
     	);
     }
 
+    function clearPerformances() {
+        $("#performances").find("tr").remove();      
+    }
+
+    function getPerformanceLinkHtml(performance) {
+        return '<a href="' + performance.url + '">Info</a>';
+    }
+
+    function getPerformanceHtml(performance) {
+        var result =  '<tr class="border_bottom"><td><div class="performance">' + 
+            performance.title + "<br />" + 
+            performance.datetime_local + "<br />" +
+            performance.venue.city + ", " + performance.venue.state + "<br />" +
+            getPerformanceLinkHtml(performance) +
+            '</div></td></tr>';
+        return result;
+    }
+
+    function showPerformances(artists) {
+        clearPerformances();
+        var totalHtml = "";
+        for (var i = 0; i < artists.length; i++) {
+            var artist = artists[i];            
+            artist.similarArtistIndex = i;
+            totalHtml += getPerformanceHtml(artist);
+        };
+        $("#performances > tbody:last").after(totalHtml);
+    }
+
+    function loadPerformances(query) {
+        getPerformances(
+            function(performances) {
+                console.log("GOT PERFORMANCES");
+                console.log(performances);
+                DavesMusicThing.performances = performances;
+                for (var i = 0; i < performances.length; i++) {
+                    performances[i].performanceIndex = i;            
+                };
+                console.log(performances);
+                showPerformances(performances);
+            },
+            function(e) {
+                console.log("oops");
+            },
+            query
+        );
+    }
+
 	</script>
 
 	<body>
+        <div id="wrapper">
+            <div id="topbar">
+                <label for="artist_search">Search by artist name</label>
+        		<input id="artist_search" name="artist_search" type="text" value="Pearl Jam" dir="ltr" spellcheck="false" size=50/>
+            </div>
 
-		<input id="artist_search" name="artist_search" type="text" value="Nirvana" dir="ltr" spellcheck="false" />
+    		<br /><br /><br />
 
-		<br /><br /><br />
+            <div class="clear">
+                <div id="left_column">
+                    <div class="column_label"><h2>Similar Artists</h2></div>
+                    <table id="similar_artists">
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="attribution"> 
+                        <a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
+                    </div>
+                       
+                </div> 
 
-        <div class="clear">
-            <div id="leftcolumn">
-    		  <iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:6olE6TJLqED3rqDCT0FyPh" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>    
-            </div>    
+                <div id="middle_column">
+                    <div class="column_label"><h2>Music</h2></div>
+                    <iframe id="spotify_widget" src="http://embed.spotify.com/?uri=spotify:artist:1w5Kfo2jwwIPruYS2UWh56" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>    
+                </div>    
 
-            <div id="rightcolumn">
-        		<table id="similar_artists">
-        			<tbody>
-        			</tbody>
-        		</table>
-
-                <a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
+                <div id="right_column">
+                    <div class="column_label"><h2>Upcoming Shows</h2></div>
+                    <table id="performances">
+                        <tbody>
+                        </tbody>
+                        <tfoot><tr><td>
+                    </table>
+                    <div class="attribution">
+                        Powered by <a href="http://seatgeek.com/"><img src="http://i.imgur.com/rCtTrfi.png" /></a>
+                    </div>
+                </div>
             </div>
         </div>
-
 	</body>
 </html>

@@ -9,5 +9,24 @@ a {
 
 .clear { clear: both;}			
 
-#leftcolumn { width: 350px; border: 0px; float: left}
-#rightcolumn { width: 350px; border: 0px; float: left}
+#left_column { width: 350px; border: 0px; float: left; }
+#middle_column { width: 350px; border: 0px; float: left; }
+#right_column { width: 350px; border: 0px; float: left; }
+
+#wrapper{
+   width:1050px;
+   margin:0 auto;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+tr.border_bottom td{
+    border-bottom: 1px solid #dddddd;
+    padding-top: 10px;
+}
+
+.attribution {
+	margin-top: 10px
+}

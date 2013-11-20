@@ -10,7 +10,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , echonest = require('./routes/echonest')
-  , spotify = require('./routes/spotify');
+  , spotify = require('./routes/spotify')
+  , seatgeek = require('./routes/seatgeek');
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.get('/suggest', echonest.suggest);
 app.get('/similar', echonest.similar);
 app.get('/artist', spotify.artist);
 app.get('/users', user.list);
+app.get('/events', seatgeek.getEvents);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
