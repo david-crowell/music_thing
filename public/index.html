@@ -25,6 +25,12 @@
 		}
 	);
 
+    $(document).ready( 
+        function() {
+            enterUsedForSelection();
+        }
+    );
+
 	//search
 
     function getSuggestions(event, callback) {
@@ -183,7 +189,7 @@
 
 	<body>
 
-		<input id="artist_search" name="artist_search" type="text" value="" dir="ltr" spellcheck="false" />
+		<input id="artist_search" name="artist_search" type="text" value="Nirvana" dir="ltr" spellcheck="false" />
 
 		<br /><br /><br />
 
