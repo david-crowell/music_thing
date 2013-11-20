@@ -1,20 +1,7 @@
 var request = require('request');
-var API_KEY;
-
-try { 
-	var exists = require.resolve('../config.js');
-	if (exists) {
-		var config = require('../config.js');
-		API_KEY = config.echonestApiKey;
-	} else {
-		//echonest default
-		API_KEY = "FILDTEOIK2HBORODV";	
-	}
-}
-catch( e ) { 
-	//echonest default
-	API_KEY = "FILDTEOIK2HBORODV";
-}
+var config = require('../config.js');
+var API_KEY = config.echonestApiKey;
+//default key = "FILDTEOIK2HBORODV"
 
 
 function similarArtistNames(callback, error, query, limit, start) {
