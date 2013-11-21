@@ -21,7 +21,7 @@ exports.suggest = suggest;
 function similar(request, response) {
 	var query = request.query.q;
 
-	echonestApi.similarArtistNames(	
+	echonestApi.similarArtists(	
 		function(artists) {
 			console.log("Success");
 			response.send(artists);
