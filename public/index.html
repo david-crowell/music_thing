@@ -257,25 +257,53 @@
         return '<a href="' + performance.url + '">Info</a>';
     }
 
-    function getPerformanceHtml(performance) {
-        var result =  '<tr class="border_bottom"><td><div class="performance">' + 
+    function setPerformanceHtml(performance, row) {
+        //var result =  '<tr class="border_bottom"><td><div class="performance">' + 
+        var innerHTML =  '<div class="performance">' + 
             performance.title + "<br />" + 
             performance.datetime_local + "<br />" +
             performance.venue.city + ", " + performance.venue.state + "<br />" +
             getPerformanceLinkHtml(performance) +
-            '</div></td></tr>';
-        return result;
+            '</div>';
+        var cell = row.insertCell(0);
+        cell.innerHTML = innerHTML;
+        return;
     }
 
-    function showPerformances(artists) {
+    function addSameArtistNearbyPerformances(performances) {
+        var nearbyPerformances = performances.sameArtistNearbyPerformances;
+        for (var i = 0; i < nearbyPerformances.length; i++) {
+            var performance = nearbyPerformances[i];
+            var row = document.getElementById("same_artist_nearby_performances").insertRow(i);
+            row.className = "border_bottom";
+            setPerformanceHtml(performance, row);
+        };
+        //document.getElementById("same_artist_nearby_performances").insertRow(-1).insertCell(0).innerHTML = " ";
+    }
+
+    function addSameArtistAllPerformances(performances) {
+        var allPerformances = performances.sameArtistAllPerformances;
+        for (var i = 0; i < allPerformances.length; i++) {
+            var performance = allPerformances[i];
+            var row = document.getElementById("same_artist_all_performances").insertRow(i);
+            row.className = "border_bottom";
+            setPerformanceHtml(performance, row);
+        };
+    }
+
+    function showPerformances(performances) {
         clearPerformances();
         var totalHtml = "";
-        for (var i = 0; i < artists.length; i++) {
-            var artist = artists[i];            
-            artist.similarArtistIndex = i;
-            totalHtml += getPerformanceHtml(artist);
+        //sameArtistAllPerformances
+        /*
+        for (var i = 0; i < performances.length; i++) {
+            var performance = performances[i];            
+            totalHtml += getPerformanceHtml(performance);
         };
         $("#performances > tbody:last").after(totalHtml);
+        */
+        addSameArtistNearbyPerformances(performances);
+        addSameArtistAllPerformances(performances);
     }
 
     function loadPerformances(query) {
@@ -284,10 +312,12 @@
                 console.log("GOT PERFORMANCES");
                 console.log(performances);
                 DavesMusicThing.performances = performances;
+                /*
                 for (var i = 0; i < performances.length; i++) {
                     performances[i].performanceIndex = i;            
                 };
                 console.log(performances);
+                */
                 showPerformances(performances);
             },
             function(e) {
@@ -329,9 +359,9 @@
                 <div id="right_column">
                     <div class="column_label"><h2>Upcoming Shows</h2></div>
                     <table id="performances">
-                        <tbody>
-                        </tbody>
-                        <tfoot><tr><td>
+                        <tbody id="same_artist_nearby_performances"></tbody>
+                        <tbody id="same_artist_all_performances"></tbody>
+                        <tbody id="similar_artist_nearby_performances"></tbody>
                     </table>
                     <div class="attribution">
                         Powered by <a href="http://seatgeek.com/"><img src="http://i.imgur.com/rCtTrfi.png" /></a>
