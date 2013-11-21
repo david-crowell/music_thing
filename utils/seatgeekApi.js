@@ -3,7 +3,7 @@ var config = require('../config.js');
 var utils = require('../public/js/utils.js');
 var CLIENT_ID = config.seatgeekClientId;
 
-function findSeatGeekEventsForArtist(callback, error, artistName, ip) {	
+function findSeatGeekEventsForArtistNearIp(callback, error, artistName, ip) {	
 	var searchUrl = "http://api.seatgeek.com/2/events?taxonomies.name=concert&per_page=100&range=100mi&geoip=" + ip;	
 	var name = artistName.replace(/&amp;/g, "&");
 	if (name.charAt(0) != '"') {
@@ -31,7 +31,12 @@ function findSeatGeekEventsForArtist(callback, error, artistName, ip) {
 		}
 	});
 }
-exports.findSeatGeekEventsForArtist = findSeatGeekEventsForArtist;
+exports.findSeatGeekEventsForArtistNearIp = findSeatGeekEventsForArtistNearIp;
+
+function findAllSeatGeekEventsForArtist(callback, error, artistName) {
+	findSeatGeekEventsForArtistNearIp(callback, error, artistName, '10.0.0.1');
+}
+exports.findAllSeatGeekEventsForArtist = findAllSeatGeekEventsForArtist;
 
 function filterEvents(events, artistName) {
 	var filtered = [];
