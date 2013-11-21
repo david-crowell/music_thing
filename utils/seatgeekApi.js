@@ -4,7 +4,7 @@ var utils = require('../public/js/utils.js');
 var CLIENT_ID = config.seatgeekClientId;
 
 function findSeatGeekEventsForArtist(callback, error, artistName, ip) {	
-	var searchUrl = "http://api.seatgeek.com/2/events?taxonomies.name=concert&per_page=100&geoip=" + ip;	
+	var searchUrl = "http://api.seatgeek.com/2/events?taxonomies.name=concert&per_page=100&range=100&geoip=" + ip;	
 	var name = artistName.replace(/&amp;/g, "&");
 	if (name.charAt(0) != '"') {
 		name = '"' + name + '"';
