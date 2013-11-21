@@ -30,10 +30,31 @@
 
     $(document).ready( 
         function() {
-            enterUsedForSelection();
-            console.log(fixSuffixedThe("Beatles, the"));
+            if (window.location.hash && window.location.hash !== "#") {
+                loadArtistFromHash();
+            } else {
+                enterUsedForSelection();        
+            }
         }
     );
+
+    $(window).on('hashchange', function() {
+        $("#artist_search").autocomplete("close");
+        loadArtistFromHash();
+    });
+
+    function loadArtistFromHash() {
+        var hash = window.location.hash;
+        if (!hash || hash === "#") {
+            return;
+        }
+        if (hash.charAt(0) === '#') {
+            hash = hash.substring(1,hash.length);
+        }
+        $("#artist_search").val(hash);
+        console.log(hash);
+        loadArtist(hash);
+    }
 
 	//search
 
@@ -115,7 +136,8 @@
     function updatePlayer(spotifyUri) {
     	var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
     	console.log(uri);
-    	$("#spotify_widget").attr('src', uri);
+        $("#spotify_widget").get(0).contentWindow.location.replace(uri); 
+    	//$("#spotify_widget").attr('src', uri);
     }
 
     function matchArtist(query, artists) {
@@ -152,7 +174,8 @@
     function useSelection(query) {
     	console.log("Got to USE SELECTION");
     	console.log(query);
-    	loadArtist(query);
+    	//loadArtist(query);
+        window.location.hash = '#' + query;
     }
 
     function menuUsedForSelection(event, ui) {
@@ -163,14 +186,11 @@
 
     function enterUsedForSelection() {
     	var query = $("#artist_search").val();
-    	$("#artist_search").autocomplete("close");
-    	console.log("Manually closed menu");
+    	//$("#artist_search").autocomplete("close");    	
     	useSelection(query);
     }
 
 	function makeSelection(query) {
-		console.log("makeSelection");
-		$("#artist_search").autocomplete("close");
 		$("#artist_search").val(query);
 		useSelection(query);
 	}
@@ -189,9 +209,11 @@
 
     function getSimilarArtistsPlayButtonHtml(artist) {
         if (artistHasSpotifyListings(artist)) {
-            return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Play</a>';
+            //return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Play</a>';
+            return '<a href="#' + artist.name + '">Play</a>';
         } else {
-            return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Show</a>';
+            //return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Show</a>';
+            return '<a href="#' + artist.name + '">Show</a>';
         }
     }
 
