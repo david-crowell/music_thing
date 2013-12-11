@@ -1,3 +1,13 @@
+$(document).ready( 
+    function() {
+        if (window.location.hash && window.location.hash !== "#") {
+            loadArtistFromHash();
+        } else {
+            loadPerformances()
+        }
+    }
+);
+
 function loadPerformances(query) {
     getLocalPerformances(
         function(performances) {
@@ -16,8 +26,7 @@ function loadPerformances(query) {
             console.log("oops");
             DavesMusicThing.performances = [];
             showPerformances([]);
-        },
-        query
+        }        
     );
 }
 

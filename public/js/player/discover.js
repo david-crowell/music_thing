@@ -1,3 +1,13 @@
+$(document).ready( 
+    function() {
+        if (window.location.hash && window.location.hash !== "#") {
+            loadArtistFromHash();
+        } else {
+            enterUsedForSelection();        
+        }
+    }
+);
+
 function loadPerformances(query) {
     getPerformances(
         function(performances) {
