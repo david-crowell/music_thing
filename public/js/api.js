@@ -83,8 +83,8 @@ function getPerformances(callback, error, query) {
     );  
 }
 
-function getLocalPerformances(callback, error, query) {
-    var uri = "events/local?q=" + query;
+function getLocalPerformances(callback, error) {
+    var uri = "events/local";
 
     var xhr = $.ajax( uri )
     .done(

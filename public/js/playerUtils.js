@@ -18,16 +18,6 @@ $(
 	}
 );
 
-$(document).ready( 
-    function() {
-        if (window.location.hash && window.location.hash !== "#") {
-            loadArtistFromHash();
-        } else {
-            enterUsedForSelection();        
-        }
-    }
-);
-
 $(window).on('hashchange', function() {
     $("#artist_search").autocomplete("close");
     loadArtistFromHash();
