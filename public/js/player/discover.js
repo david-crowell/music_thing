@@ -4,7 +4,7 @@ $(document).ready(
             loadArtistFromHash();
         } else {
             enterUsedForSelection();        
-        }
+        }		
     }
 );
 
