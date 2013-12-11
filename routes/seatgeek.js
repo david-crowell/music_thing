@@ -1,6 +1,6 @@
 var seatgeekApi = require('../utils/seatgeekApi.js');
 
-function getEvents(request, response) {
+function getArtistEvents(request, response) {
 	var query = request.query.q;
 
 	var ip = getClientIp(request);
@@ -50,7 +50,31 @@ function getEvents(request, response) {
 		query		
 	);
 }
-exports.getEvents = getEvents;
+exports.getArtistEvents = getArtistEvents;
+
+function getLocalEvents(request, response) {
+	var query = request.query.q;
+
+	var ip = getClientIp(request);
+	console.log(ip);
+	if (ip === "127.0.0.1") { ip = "18.10.0.1";} //generic MIT-block address
+
+	var payload = {};
+
+	seatgeekApi.findSeatGeekEventsNearIp(		
+		function(events) {
+			console.log("Success");
+			response.send( events );
+		},
+		function(e) {
+			console.log("ERROR");
+			console.log(e.toString());
+			response.send( [] );
+		},
+		ip
+	);
+}
+exports.getLocalEvents = getLocalEvents;
 
 function getClientIp(req) {
 	var ipAddress;

@@ -6,11 +6,11 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/date.js"></script>
-    <script src="js/player/discover.js"></script>
+    <script src="js/date.js"></script>    
+    <script src="js/player/local.js"></script>
     <script src="js/playerUtils.js"></script>
     <script src="js/api.js"></script>
-	<script>
+	<script>        
 
 	</script>
 
@@ -24,16 +24,14 @@
     		<br /><br /><br />
 
             <div class="clear">
-                <div id="left_column">
-                    <div class="column_label"><h2>Similar Artists</h2></div>
-                    <table id="similar_artists">
-                        <tbody>
-                        </tbody>
+                <div id="left_column">                    
+                    <div class="column_label"><h2>Nearby Shows</h2></div>
+                    <table id="performances">
+                        <tbody id="all_artists_nearby_performances"></tbody>
                     </table>
-                    <div class="attribution"> 
-                        <a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
-                    </div>
-                       
+                    <div class="attribution">
+                        Powered by <a href="http://seatgeek.com/"><img src="http://i.imgur.com/rCtTrfi.png" /></a>
+                    </div>                        
                 </div> 
 
                 <div id="middle_column">
@@ -42,15 +40,14 @@
                 </div>    
 
                 <div id="right_column">
-                    <div class="column_label"><h2>Upcoming Shows</h2></div>
-                    <table id="performances">
-                        <tbody id="same_artist_nearby_performances"></tbody>
-                        <tbody id="same_artist_all_performances"></tbody>
-                        <tbody id="similar_artist_nearby_performances"></tbody>
+                    <div class="column_label"><h2>Similar Artists</h2></div>
+                    <table id="similar_artists">
+                        <tbody>
+                        </tbody>
                     </table>
-                    <div class="attribution">
-                        Powered by <a href="http://seatgeek.com/"><img src="http://i.imgur.com/rCtTrfi.png" /></a>
-                    </div>
+                    <div class="attribution"> 
+                        <a href="http://the.echonest.com/"><img src="http://echonest.com/static/img/logos/EN_P_on_Light_Transparent_Horizontal.png" /></a>
+                    </div>                    
                 </div>
             </div>
         </div>
