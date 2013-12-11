@@ -36,10 +36,11 @@ function showPerformances(performances) {
 }
 
 function setPerformanceHtml(performance, row) {
-    var innerHTML =  '<div class="performance">' + 
+    var innerHTML =  '<div class="performance">' +
         getPerformanceTitleHtml(performance) + "<br />" + 
         //getPerformersHtml(performance) + "<br />" +
         formatDate(performance.datetime_local) + "<br />" +
+        performance.venue.name + "<br />" +
         performance.venue.city + ", " + performance.venue.state + "<br />" +
         getPerformanceLinkHtml(performance) +
         '</div>';
