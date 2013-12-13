@@ -28,6 +28,16 @@ a {
 	overflow: scroll;	
 }
 
+.performance_artists{
+	float: right;
+	width: 120px;
+}
+
+.performance_info{
+	float: left;
+	width: 215px;
+}
+
 table {
 	border-collapse:collapse;
 }
@@ -35,6 +45,28 @@ table {
 tr.border_bottom td{
     border-bottom: 1px solid #dddddd;
     padding-top: 10px;
+}
+
+ul {
+	margin: 0px;
+	padding: 0px;
+	-webkit-margin-before: 0px;
+	-webkit-margin-after: 0px;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 1em;
+}
+
+li {
+	padding-bottom: 3px;
+}
+.performance_date{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.performance_link{
+	margin-top: 5px;
 }
 
 .attribution {

@@ -36,16 +36,3 @@ function showPerformances(performances) {
     addSameArtistNearbyPerformances(performances);
     addSameArtistAllPerformances(performances);
 }
-
-function setPerformanceHtml(performance, row) {
-    //var result =  '<tr class="border_bottom"><td><div class="performance">' + 
-    var innerHTML =  '<div class="performance">' + 
-        performance.title + "<br />" + 
-        formatDate(performance.datetime_local) + "<br />" +
-        performance.venue.city + ", " + performance.venue.state + "<br />" +
-        getPerformanceLinkHtml(performance) +
-        '</div>';
-    var cell = row.insertCell(0);
-    cell.innerHTML = innerHTML;
-    return;
-}

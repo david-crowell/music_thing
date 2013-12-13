@@ -35,14 +35,19 @@ function showPerformances(performances) {
     addNearbyPerformances(performances);
 }
 
-function setPerformanceHtml(performance, row) {
-    var innerHTML =  '<div class="performance">' +
-        getPerformanceTitleHtml(performance) + "<br />" + 
-        //getPerformersHtml(performance) + "<br />" +
-        formatDate(performance.datetime_local) + "<br />" +
-        performance.venue.name + "<br />" +
-        performance.venue.city + ", " + performance.venue.state + "<br />" +
-        getPerformanceLinkHtml(performance) +
+function setTwoColumnPerformanceHtml(performance, row) {
+    var innerHTML =  '' + 
+        '<div class="performance">' + 
+            '<div class="performance_info">' +
+                '<div class="performance_title">' + performance.title + "</div>" + 
+                '<div class="performance_date">' + formatDate(performance.datetime_local) + "</div>" +
+                '<div class="performance_venue">' + performance.venue.name + "</div>" +
+                '<div class="performance_location">' + performance.venue.city + ", " + performance.venue.state + "</div>" +
+                '<div class="performance_link">' + getPerformanceLinkHtml(performance) + "</div>" +
+            '</div>' + 
+            '<div class="performance_artists">' +
+                getPerformersHtml(performance) +
+            '</div>' +
         '</div>';
     var cell = row.insertCell(0);
     cell.innerHTML = innerHTML;

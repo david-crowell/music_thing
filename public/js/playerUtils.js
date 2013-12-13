@@ -189,17 +189,74 @@ function annealWithFiller(parts, filler) {
     return innerHTML;
 }
 
-function getPerformanceTitleHtml(performance) {
-    var title = performance.title;
-    for (var i = 0; i < performance.performers.length; i++) {
-        var performer = performance.performers[i];
-        var startingIndex = title.indexOf(performer.name);
-        if (startingIndex > -1) {
-            var parts = title.split(performer.name);
-            var newName = '<a href="#' + performer.name + '">' + performer.name + '</a>';
-            title = annealWithFiller(parts, newName);
+function isLink(string) {
+    return string.indexOf('<a ') == 0;
+}
+
+function splitOnFirstInstanceOf(string, toMatch) {
+    var start = string.indexOf(toMatch);
+    var end = start + toMatch.length // 'end' in that it's the first character after the substring
+    var first = string.slice(0,start);
+    var match = string.slice(start, end);
+    var rest = '';
+    if (end < string.length) {
+        rest = string.slice(end);
+    }
+    return [first, rest];
+}
+
+// treat array of substrings as string
+function replaceSubstringInArrayWith(substringArray, toReplace, replaceWith) {    
+    for (var i = 0; i < substringArray.length; i++) {
+        var substring = substringArray[i];
+        if (isLink(substring)) {
+            continue;
+        }
+        if (substring.indexOf(toReplace) != -1) {
+            var splits = splitOnFirstInstanceOf(substring, toReplace); //substring.split(toReplace, 1);
+            splits = [splits[0], replaceWith, splits[1]];
+            var rebuiltSubstringArray = substringArray.slice(0,i).concat(splits);
+            if (i < substringArray.length - 1) {
+                rebuiltSubstringArray = rebuiltSubstringArray.concat(substringArray.slice(i+1));
+            }
+            return rebuiltSubstringArray;
         }
     };
+    return substringArray;
+}
+
+function getPerformerLink(performer) {
+    return '<a href="#' + performer.name + '">' + performer.name + '</a>';
+}
+
+function addMissedArtists(title, performers) {
+    if (performers.length == 0) {return title;}
+    title = title + " (with ";
+    for (var i = 0; i < performers.length; i++) {
+        console.log(performers[i].name);
+        title = title + " " + getPerformerLink( performers[i] ) + ",";
+    };
+    title = title.slice(0,title.length - 1);
+    title = title + ")";
+    return title;
+}
+
+function getPerformanceTitleHtml(performance) {
+    var performersWhoDidntGetIn = [];
+    var title = performance.title;
+    var parts = [title];
+    for (var i = 0; i < performance.performers.length; i++) {
+        var performer = performance.performers[i];
+        var performerLink = getPerformerLink(performer);        
+
+        newParts = replaceSubstringInArrayWith(parts, performer.name, performerLink);
+        if (newParts.length === parts.length) {
+            performersWhoDidntGetIn.push(performer);
+        }
+        parts = newParts;
+    };
+    title = parts.join('');
+    title = addMissedArtists(title, performersWhoDidntGetIn);
     return title;
 }
 
@@ -215,6 +272,20 @@ function getPerformersHtml(performance) {
 
 function getPerformanceLinkHtml(performance) {
     return '<a href="' + performance.url + '">Info</a>';
+}
+
+function setPerformanceHtml(performance, row) {
+    var innerHTML =  '' + 
+        '<div class="performance">' + 
+            '<div class="performance_title">' + getPerformanceTitleHtml(performance) + "</div>" + 
+            '<div class="performance_date">' + formatDate(performance.datetime_local) + "</div>" +
+            '<div class="performance_venue">' + performance.venue.name + "</div>" +
+            '<div class="performance_location">' + performance.venue.city + ", " + performance.venue.state + "</div>" +
+            '<div class="performance_link">' + getPerformanceLinkHtml(performance) + "</div>" +
+        '</div>';
+    var cell = row.insertCell(0);
+    cell.innerHTML = innerHTML;
+    return;
 }
 
 function addSameArtistNearbyPerformances(performances) {
