@@ -72,3 +72,7 @@ li {
 .attribution {
 	margin-top: 10px
 }
+
+#postal_code_setting {
+	float: right;
+}

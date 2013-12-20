@@ -52,14 +52,38 @@ function getArtistEvents(request, response) {
 }
 exports.getArtistEvents = getArtistEvents;
 
-function getLocalEvents(request, response) {
-	var query = request.query.q;
+function getLocalEvents(request, response) {	
+	if (request.query.postal_code) {
+		getLocalEventsByPostalCode(request, response);
+	} else {
+		getLocalEventsByIp(request, response);
+	}
+}
+exports.getLocalEvents = getLocalEvents;
+
+function getLocalEventsByPostalCode(request, response) {
+	var postal_code = request.query.postal_code;
+	console.log(postal_code);
+
+	seatgeekApi.findSeatGeekEventsNearPostalCode(		
+		function(events) {
+			console.log("Success");
+			response.send( events );
+		},
+		function(e) {
+			console.log("ERROR");
+			console.log(e.toString());
+			response.send( [] );
+		},
+		postal_code
+	);
+}
+
+function getLocalEventsByIp(request, response) {
 
 	var ip = getClientIp(request);
 	console.log(ip);
 	if (ip === "127.0.0.1") { ip = "18.10.0.1";} //generic MIT-block address
-
-	var payload = {};
 
 	seatgeekApi.findSeatGeekEventsNearIp(		
 		function(events) {
@@ -74,7 +98,6 @@ function getLocalEvents(request, response) {
 		ip
 	);
 }
-exports.getLocalEvents = getLocalEvents;
 
 function getClientIp(req) {
 	var ipAddress;

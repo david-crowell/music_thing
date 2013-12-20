@@ -78,15 +78,35 @@ function findSeatGeekEventsNearIp(callback, error, ip) {
 }
 exports.findSeatGeekEventsNearIp = findSeatGeekEventsNearIp;
 
+function findSeatGeekEventsNearPostalCode(callback, error, postal_code) {	
+	var searchUrl = "http://api.seatgeek.com/2/events?taxonomies.name=concert&per_page=1000&range=30mi&postal_code=" + postal_code;
+
+	console.log(searchUrl);
+
+	request(searchUrl, function(err, response, body) {
+		if (err) { error(err); return; }
+		data = JSON.parse(body);
+		if (data["events"].length == 0 ) {
+			console.log("Failed with 0 results: " + artistName + " , " + artistTerm);
+			callback([]);
+		} else {
+			var events = data.events;
+			console.log("Pre-filtering events: " + events.length);
+			callback(events);
+		}
+	});
+}
+exports.findSeatGeekEventsNearPostalCode = findSeatGeekEventsNearPostalCode;
+
 function test(){
-	findSeatGeekEventsForArtist(
+	findSeatGeekEventsNearPostalCode(
 		function(events) {
-			//console.log(events);			
+			console.log(events);			
 		},
 		function(e) {
 			console.log("ERrror");
 			console.log(e);
 		},
-		"Crocodiles"
+		"02122"
 	);
 }

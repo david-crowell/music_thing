@@ -83,8 +83,11 @@ function getPerformances(callback, error, query) {
     );  
 }
 
-function getLocalPerformances(callback, error) {
+function getLocalPerformances(callback, error, postal_code) {
     var uri = "events/local";
+    if (postal_code) {
+    	uri = uri + "?postal_code=" + postal_code;
+    }
 
     var xhr = $.ajax( uri )
     .done(

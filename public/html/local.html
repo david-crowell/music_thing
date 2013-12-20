@@ -2,26 +2,31 @@
 
 <html>
     <link rel="stylesheet" href="stylesheets/style.css" />
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/date.js"></script>    
     <script src="js/player/local.js"></script>
     <script src="js/playerUtils.js"></script>
     <script src="js/api.js"></script>
-	<script>        
+    <script>        
 
-	</script>
+    </script>
 
-	<body>
+    <body>
         <div id="wrapper">
             <div id="topbar">
                 <label for="artist_search">Search by artist name</label>
-        		<input id="artist_search" name="artist_search" type="text" value="" dir="ltr" spellcheck="false" size=50/>
+                <input id="artist_search" name="artist_search" type="text" value="" dir="ltr" spellcheck="false" size=50/>
+                <div id="postal_code_setting">
+                    <label for="postal_code">Set your postal code (U.S. and Canada only)</label>
+                    <input id="postal_code" name="postal_code" type="text" valie="" dir="ltr" spellcheck="false" size=5/>
+                    <button type="button" onclick="setPostalCode()">Update</button>
+                </div>
             </div>
 
-    		<br /><br /><br />
+            <br /><br /><br />
 
             <div class="clear">
                 <div id="left_column">                    
@@ -55,5 +60,5 @@
                 </div>
             </div>
         </div>
-	</body>
+    </body>
 </html>

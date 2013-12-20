@@ -5,10 +5,24 @@ $(document).ready(
         } else {
             loadPerformances()
         }
+
+        $("#postal_code").keypress(
+            function(e) {
+                if (e.keyCode === 13) {
+                    setPostalCode();                        
+                }
+            }
+        );
     }
 );
 
+function setPostalCode() {
+    loadPerformances(null);
+}
+
 function loadPerformances(query) {
+    var postal_code = $("#postal_code").val();
+
     getLocalPerformances(
         function(performances) {
             console.log("GOT PERFORMANCES");
@@ -26,7 +40,8 @@ function loadPerformances(query) {
             console.log("oops");
             DavesMusicThing.performances = [];
             showPerformances([]);
-        }        
+        },
+        postal_code        
     );
 }
 

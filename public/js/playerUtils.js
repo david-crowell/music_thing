@@ -1,21 +1,21 @@
 var DavesMusicThing = DavesMusicThing || {};
 
 $(
-	function() {
-	    
-	    $("#artist_search").autocomplete(
-	    	{
-	    		'source': getSuggestionsFromSearchbar,
-	    		'select': menuUsedForSelection
-	    	}
-	    ).keypress(
-	    	function(e) {
-	    		if (e.keyCode === 13) {
-	    			enterUsedForSelection();		    			
-		    	}
-		    }
-		);
-	}
+    function() {
+        
+        $("#artist_search").autocomplete(
+            {
+                'source': getSuggestionsFromSearchbar,
+                'select': menuUsedForSelection
+            }
+        ).keypress(
+            function(e) {
+                if (e.keyCode === 13) {
+                    enterUsedForSelection();                        
+                }
+            }
+        );        
+    }
 );
 
 $(window).on('hashchange', function() {
@@ -39,85 +39,85 @@ function loadArtistFromHash() {
 //search
 
 function getSuggestionsFromSearchbar(event, callback) {
-	var query = $("#artist_search").val();
-	getSuggestions(
-		callback, 
-		function(e){
-			callback([]);
-		}, 
-		query
-	);
+    var query = $("#artist_search").val();
+    getSuggestions(
+        callback, 
+        function(e){
+            callback([]);
+        }, 
+        query
+    );
 }
 
 function updatePlayer(spotifyUri) {
-	var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
-	console.log(uri);
+    var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
+    console.log(uri);
     $("#spotify_widget").get(0).contentWindow.location.replace(uri); 
-	//$("#spotify_widget").attr('src', uri);
+    //$("#spotify_widget").attr('src', uri);
 }
 
 function clearPlayer() {
-	$("#spotify_widget").get(0).contentWindow.location.replace("about:blank"); 	
+    $("#spotify_widget").get(0).contentWindow.location.replace("about:blank");  
 }
 
 function matchArtist(query, artists) {
-	var bestGuess = artists[0];
-	for (var i = artists.length - 1; i >= 0; i--) {
-		if (artists[i].name === query) {
-			bestGuess = artists[i];
-		}
-	};
-	return bestGuess;
+    var bestGuess = artists[0];
+    for (var i = artists.length - 1; i >= 0; i--) {
+        if (artists[i].name === query) {
+            bestGuess = artists[i];
+        }
+    };
+    return bestGuess;
 }
 
 function loadArtist(query) {
-	getArtistSpotifyInfo (    	
-		function (artists) {						
-			var artist = matchArtist(query, artists);
-			var artistUri = artist.href;
-			console.log(artistUri);
-			updatePlayer(artistUri);
-			clearSimilarArtists();
-			loadSimilarArtists(artist.name);
+    getArtistSpotifyInfo (      
+        function (artists) {                        
+            var artist = matchArtist(query, artists);
+            var artistUri = artist.href;
+            console.log(artistUri);
+            updatePlayer(artistUri);
+            clearSimilarArtists();
+            loadSimilarArtists(artist.name);
             loadPerformances(artist.name);
-		},
-		function(e) {
-			console.log(e);
-			clearPlayer();
-			clearSimilarArtists();
-			loadSimilarArtists(query);
+        },
+        function(e) {
+            console.log(e);
+            clearPlayer();
+            clearSimilarArtists();
+            loadSimilarArtists(query);
             loadPerformances(query);
-		},
-		query
-	);
+        },
+        query
+    );
 }
 
 function useSelection(query) {
-	console.log("Got to USE SELECTION");
-	console.log(query);
-	//loadArtist(query);
+    console.log("Got to USE SELECTION");
+    console.log(query);
+    //loadArtist(query);
     window.location.hash = '#' + query;
 }
 
 function menuUsedForSelection(event, ui) {
-	var query = ui.item.value;
-	console.log(query);
-	useSelection(query);
+    var query = ui.item.value;
+    console.log(query);
+    useSelection(query);
 }
 
 function enterUsedForSelection() {
-	var query = $("#artist_search").val();
-	//$("#artist_search").autocomplete("close");    	
-	useSelection(query);
+    var query = $("#artist_search").val();
+    //$("#artist_search").autocomplete("close");        
+    useSelection(query);
 }
 
 function makeSelection(query) {
-	$("#artist_search").val(query);
-	useSelection(query);
+    $("#artist_search").val(query);
+    useSelection(query);
 }
 
 function clearSimilarArtists() {
-	$("#similar_artists").find("tr").remove(); 		
+    $("#similar_artists").find("tr").remove();      
 }
 
 function artistHasSpotifyListings(artist) {
@@ -139,37 +139,37 @@ function getSimilarArtistsPlayButtonHtml(artist) {
 }
 
 function getSimilarArtistsHtml(artist) {
-	return '<tr class="border_bottom"><td>' + artist.name + '</td><td>' + getSimilarArtistsPlayButtonHtml(artist) + '</td></tr>';
+    return '<tr class="border_bottom"><td>' + artist.name + '</td><td>' + getSimilarArtistsPlayButtonHtml(artist) + '</td></tr>';
 }
 
 function showSimilarArtists(artists) {
-	clearSimilarArtists();
-	var totalHtml = "";
-	for (var i = 0; i < artists.length; i++) {
-		var artist = artists[i];    		
+    clearSimilarArtists();
+    var totalHtml = "";
+    for (var i = 0; i < artists.length; i++) {
+        var artist = artists[i];            
         artist.similarArtistIndex = i;
-		totalHtml += getSimilarArtistsHtml(artist);
-	};
-	$("#similar_artists > tbody:last").after(totalHtml);
+        totalHtml += getSimilarArtistsHtml(artist);
+    };
+    $("#similar_artists > tbody:last").after(totalHtml);
 }
 
 function loadSimilarArtists(query) {
-	getSimilarArtists(
-		function(artists) {
+    getSimilarArtists(
+        function(artists) {
             DavesMusicThing.similarArtists = artists;
             for (var i = 0; i < artists.length; i++) {
                 artists[i].similarArtistIndex = i;            
             };
-			console.log(artists);
-			showSimilarArtists(artists);
-		},
-		function(e) {
-			console.log(e);
-			DavesMusicThing.similarArtists = [];
-			showSimilarArtists([]);
-		},
-		query
-	);
+            console.log(artists);
+            showSimilarArtists(artists);
+        },
+        function(e) {
+            console.log(e);
+            DavesMusicThing.similarArtists = [];
+            showSimilarArtists([]);
+        },
+        query
+    );
 }
 
 function clearPerformances() {
@@ -310,7 +310,7 @@ function addSameArtistAllPerformances(performances) {
 }
 
 function addNearbyPerformances(performances) {
-	for (var i = 0; i < performances.length; i++) {
+    for (var i = 0; i < performances.length; i++) {
         var performance = performances[i];
         var row = document.getElementById("all_artists_nearby_performances").insertRow(i);
         row.className = "border_bottom";
