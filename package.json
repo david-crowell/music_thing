@@ -8,7 +8,9 @@
   "dependencies": {
     "express": "3.0.0rc5",
     "jade": "*",
-    "request": "*"
+    "request": "*",
+    "jsdom": "*",
+    "zlib": "*"    
   },
   "engines": {
     "node": "0.10.21",

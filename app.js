@@ -13,7 +13,8 @@ var express = require('express')
   , spotify = require('./routes/spotify')
   , seatgeek = require('./routes/seatgeek')
   , local = require('./routes/local')
-  , discover = require('./routes/discover');
+  , discover = require('./routes/discover')
+  , lastfm = require('./routes/lastfm')
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.get('/foo', user.list);
 app.get('/events', seatgeek.getArtistEvents);
 app.get('/events/local', seatgeek.getLocalEvents);
 app.get('/', discover.index);
+app.post('/tags', lastfm.tags);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
