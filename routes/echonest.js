@@ -35,3 +35,23 @@ function similar(request, response) {
 	);
 }
 exports.similar = similar;
+
+function similarPost(request, response) {
+	var body = request.body;
+	console.log(body);
+	var artists = body.artists;
+
+	echonestApi.similarArtistsMultiple(	
+		function(artists) {
+			console.log("Success");
+			response.send(artists);
+		},
+		function(e) {
+			console.log("ERROR");
+			console.log(e.toString());
+			response.send(e.toString());
+		},
+		artists
+	);
+}
+exports.similarPost = similarPost;
