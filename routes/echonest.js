@@ -37,8 +37,7 @@ function similar(request, response) {
 exports.similar = similar;
 
 function similarPost(request, response) {
-	var body = request.body;
-	console.log(body);
+	var body = request.body;	
 	var artists = body.artists;
 
 	echonestApi.similarArtistsMultiple(	

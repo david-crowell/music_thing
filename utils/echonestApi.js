@@ -144,7 +144,7 @@ exports.artistProfile = artistProfile;
 function artistReviews(callback, error, query, start) {
 	if (!start) { start = 0; }
 
-	var uri = "http://developer.echonest.com/api/v4/artist/reviews?api_key=BOAYYST4VLXT0J6UC&format=json&results=15&name=";
+	var uri = "http://developer.echonest.com/api/v4/artist/reviews?api_key=BOAYYST4VLXT0J6UC&format=json&results=30&name=";
 	uri = uri + query;
 
 	request.get(
@@ -206,7 +206,7 @@ function artistBiographies(callback, error, query, start) {
 function artistArticles(callback, error, query) {
 	var articles = []
 
-	var methods = [artistBiographies, artistReviews];
+	var methods = [artistBiographies, artistReviews];	
 	var toDo = methods.length;
 	var did = 0;
 
@@ -264,7 +264,7 @@ exports.suggestArtists = suggestArtists;
 //{"response": {"status": {"version": "4.2", "code": 0, "message": "Success"}, "artists": [{"name": "Radiohead", "id": "ARH6W4X1187B99274F"}, {"name": "Wonky vs. Radiohead", "id": "AR26WWW1187FB40070"}, {"name": "Radiohead Lullabies", "id": "ARHYPRQ11F4C83D230"}, {"name": "Radiohead Tribute", "id": "ARMLGGK13A23CD1318"}, {"name": "Radiohead Tribute - Meeting in the Aisle", "id": "ARVOZQT11E8F5C12BA"}, {"name": "Radioheadheadheadheadhead", "id": "ARPMOVZ126DD9A5A25"}, {"name": "Meeting in the Aisle: a Tribute to the Music of Radiohead", "id": "ARVGJEW11E8F5C0E4E"}, {"name": "Radioheadheadhead", "id": "ARKVYRS126DD652B02"}, {"name": "Rhythms Del Mundo feat El Lele De Los Van Van and Radiohead", "id": "ARSUMDD13FE9646A84"}]}}
 
 function test() {
-	/*
+	
 	artistArticles(
 		function(artists) {		
 
@@ -272,9 +272,10 @@ function test() {
 		function(e) {
 			console.log("Error! " + e.toString());
 		},
-		"Radiohead"
+		"Yellow Ostrich"
 	);
-	*/
+	
+	/*
 	similarArtistsMultiple(
 		function(artists) {
 			console.log(artists);
@@ -284,5 +285,6 @@ function test() {
 		},
 		["Nirvana", "Pearl Jam", "Bush"]
 	);
+	*/
 }
 //test();
