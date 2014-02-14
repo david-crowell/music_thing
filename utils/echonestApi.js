@@ -1,6 +1,8 @@
 var request = require('request');
 var config = require('../config.js');
 var parser = require('./textParser.js');
+var webUtils = require('./webUtils.js');
+var textParser = require('./textParser.js');
 
 var API_KEY = config.echonestApiKey;
 //default key = "FILDTEOIK2HBORODV"
@@ -141,10 +143,63 @@ function artistProfile(callback, error, query) {
 }
 exports.artistProfile = artistProfile;
 
+
+
+
+function isShortenedText(text) {
+	return text.endsWith("...");
+}
+
+function fetchFullArticle(callback, error, article) {
+	webUtils.fetchPageJqueryDom(
+		function($) {
+			var text = textParser.extractSanitizedParagraphText($);			
+			article.text = text;
+			callback(article);
+		}, 
+		function(e) {
+			console.log('Fetch Page error: ' + e.toString());
+			error(e);
+		},
+		article.url
+	);
+}
+
+function fetchFullArticles(callback, error, articles) {
+	var toDo = articles.length;
+	var did = 0;
+
+	function done(article) {
+		did ++;
+		if (did >= toDo) {
+			callback(articles);
+		}
+	}
+
+	for (var i = 0; i < toDo; i++) {
+		var article = articles[i];
+		if (isShortenedText(article.text)) {
+			fetchFullArticle(
+				done,
+				done,
+				article
+			);
+		} else {
+			done(article);
+		}
+	};
+	if (toDo === 0) {
+		callback(articles);
+	}
+}
+exports.fetchFullArticles = fetchFullArticles;
+
+
+
 function artistReviews(callback, error, query, start) {
 	if (!start) { start = 0; }
 
-	var uri = "http://developer.echonest.com/api/v4/artist/reviews?api_key=BOAYYST4VLXT0J6UC&format=json&results=30&name=";
+	var uri = "http://developer.echonest.com/api/v4/artist/reviews?api_key=BOAYYST4VLXT0J6UC&format=json&results=100&name=";
 	uri = uri + query;
 
 	request.get(
@@ -162,7 +217,7 @@ function artistReviews(callback, error, query, start) {
 				reviews[i].text = reviews[i].summary;
 			};
 
-			parser.fetchFullArticles(
+			fetchFullArticles(
 				function(reviews) {
 					callback(reviews);
 					//callback( parser.findKeyWordsForArrayOfObjectsWithWordCountsProperty( biographies ) );
@@ -191,7 +246,7 @@ function artistBiographies(callback, error, query, start) {
 			var body = JSON.parse(rawBody);
 			var biographies = body.response.biographies;
 
-			parser.fetchFullArticles(
+			fetchFullArticles(
 				function(biographies) {
 					callback(biographies);
 					//callback( parser.findKeyWordsForArrayOfObjectsWithWordCountsProperty( biographies ) );
@@ -214,8 +269,8 @@ function artistArticles(callback, error, query) {
 		did ++;
 		if (did >= toDo) {
 			//callback(articles);
-			var result = parser.findKeyWordsForArrayOfObjectsWithWordCountsProperty( articles );
-			callback(result);
+			//var result = parser.findKeyWordsForArrayOfObjectsWithWordCountsProperty( articles );
+			callback(articles);
 		}
 	}
 
@@ -223,6 +278,7 @@ function artistArticles(callback, error, query) {
 		var method = methods[i];
 		method(
 			function(subArticles) {
+				console.log("Got a flavor of article: " + subArticles.length);
 				articles = articles.concat(subArticles);
 				done();
 			},
@@ -234,6 +290,49 @@ function artistArticles(callback, error, query) {
 		);
 	};
 }
+exports.artistArticles = artistArticles;
+
+function artistArticlesByType(callback, error, query) {
+	var articlesByType = {};
+
+	var resultLabels = ['biographies', 'reviews'];
+	var methods = [artistBiographies, artistReviews];	
+	var toDo = methods.length;
+	var did = 0;
+
+	function done() {
+		did ++;
+		if (did >= toDo) {
+			//callback(articles);
+			//var result = parser.findKeyWordsForArrayOfObjectsWithWordCountsProperty( articles );
+			callback(articlesByType);
+		}
+	}
+	function handleError(e) {
+		console.log(e.toString());
+		done();
+	}
+
+	artistBiographies(
+		function(biographies) {
+			console.log("Got biographies: " + biographies.length);
+			articlesByType.biographies = biographies;
+			done();
+		},
+		handleError,
+		query
+	);
+	artistReviews(
+		function(reviews) {
+			console.log("Got reviews: " + reviews.length);
+			articlesByType.reviews = reviews;
+			done();
+		},
+		handleError,
+		query
+	);
+}
+exports.artistArticlesByType = artistArticlesByType;
 
 function suggestArtists(callback, error, query, limit, start) {
 	if (!limit) { limit = 30; }
@@ -266,13 +365,13 @@ exports.suggestArtists = suggestArtists;
 function test() {
 	
 	artistArticles(
-		function(artists) {		
-
+		function(articles) {		
+			console.log(articles.length);
 		},
 		function(e) {
 			console.log("Error! " + e.toString());
 		},
-		"Yellow Ostrich"
+		"Pearl Jam"
 	);
 	
 	/*
