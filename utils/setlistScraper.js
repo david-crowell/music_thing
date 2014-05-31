@@ -58,23 +58,23 @@ function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 function getDetailsForSetlists(callback, error, setlists) {
 	console.log("Getting details for " + setlists.length + " setlists");
 	var toDo = setlists.length;
-	var next = 0;
+	var completed = 0;
 
-	function doNext() {
-		if (next === toDo) {
+	function done() {
+		completed += 1;
+		if (completed === toDo) {
 			callback(setlists);
-		} else {
-			getDetailsForSetlistObject(
-				function(setlist) {
-					next += 1;
-					doNext();
-				},
-				error,
-				setlists[next]
-			);
 		}
 	}
-	doNext();
+	for (var i = 0; i < setlists.length; i++) {
+		getDetailsForSetlistObject(
+			function(setlist) {
+				done();
+			},
+			error,
+			setlists[i]
+		);
+	};
 }
 
 // sets setlsit.songs and setlist.date
@@ -123,7 +123,6 @@ function rankSongsByPlayCount(setlists) {
 	var songNameToSongObjectMap = {};
 	console.log(setlists.length);
 	for (var i = 0; i < setlists.length; i++) {
-		console.log("setlist " + i);
 		var setlist = setlists[i];
 		for (var j = 0; j < setlist.songs.length; j++) {
 			var song = setlist.songs[j];

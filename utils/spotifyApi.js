@@ -52,7 +52,8 @@ exports.findTrackByTitleAndArtistName = findTrackByTitleAndArtistName;
 function addTrackDataToSongWithArtistName(callback, error, song, artistName) {
 	findTrackByTitleAndArtistName(
 		function (track) {
-			if (track === null) {
+			if (track === null || track === undefined) {
+				console.log("Couldn't find " + song.title + " by " + artistName);
 				song.onSpotify = false;
 			} else {
 				song.title = track.title;
@@ -90,34 +91,6 @@ function addTrackDataToSongsWithArtistName(callback, error, songs, artistName) {
 	};
 }
 exports.addTrackDataToSongsWithArtistName = addTrackDataToSongsWithArtistName;
-
-function findTracksByTitleAndArtistName(callback, error, tracks, artistName) {
-	var toDo = tracks.length;
-	var next = 0;
-
-	var results = [];
-
-	function doNext() {
-		if (next === toDo) {
-			callback(results);
-		} else {
-			findTrackByTitleAndArtistName(
-				function(track) {
-					results.push(track);
-					next += 1;
-					doNext();
-				},
-				error,
-				tracks[next],
-				artistName
-			);
-		}
-	}
-	doNext();
-}
-exports.findTracksByTitleAndArtistName = findTracksByTitleAndArtistName;
-
-function searchForTrackByArtistSpotifyUri(callback, error, track, artistName){}
 
 function searchForTrack(callback, error, query) {
 	if (query.charAt(0) != '"') {
