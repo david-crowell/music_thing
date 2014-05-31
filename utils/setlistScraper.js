@@ -1,5 +1,6 @@
 var request = require("request");
 var webUtils = require("./webUtils");
+var languageUtils = require("./languageUtils");
 
 var rootUrl = "http://www.setlist.fm/";
 
@@ -42,7 +43,7 @@ function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 			$(".listSetlists").find(".setlistPreview").each(
 				function(index, item) {
 					var a = $($(item).find('h2')[0]).find('a')[0];
-					var link = $(a).attr('href');
+					var link = rootUrl + $(a).attr('href');
 					var title = a.innerHTML
 					setlists.push( {'title':title, 'link':link} );
 				}
@@ -54,42 +55,177 @@ function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 	);
 }
 
-/*
-$('tr').each(function(trIndex, row) {
-		var isRowBullshit = false;
-		var date, artistName, time, venueName, venueAddress, venueCity, venueState, venuePostalCode, venueCountry, venueGeo, ticketUrl;
-		$(row).find('td').each( function(index, td) {
-			if ($(td).attr('class') == 'hd') {
-				return true;
-			} if ($(td).attr('class') == 'rShim') {
-				isRowBullshit = true;
-				return false;
-			} if ($(td).attr('class') == 's1') {
-				isRowBullshit = true;
-				return false;
-			}
-			*/
+function getDetailsForSetlists(callback, error, setlists) {
+	console.log("Getting details for " + setlists.length + " setlists");
+	var toDo = setlists.length;
+	var next = 0;
 
-function test() {
-	getArtistNameSearchLink(
-		function(artistNameSearchLink) {		
-			getSetlistsFromSearchLink(
-				function(setlists) {
-					console.log(setlists);
+	function doNext() {
+		if (next === toDo) {
+			callback(setlists);
+		} else {
+			getDetailsForSetlistObject(
+				function(setlist) {
+					next += 1;
+					doNext();
 				},
-				function(e) {
-					console.log("Fuck");
+				error,
+				setlists[next]
+			);
+		}
+	}
+	doNext();
+}
+
+// sets setlsit.songs and setlist.date
+function getDetailsForSetlistObject(callback, error, setlist) {
+	console.log(setlist);
+	webUtils.fetchPageJqueryDom(
+		function ($, window) {
+			var songs = [];
+			$(".setlistSongs").find("ol").find("li").each(
+				function(index, item) {
+					var songLinkTag = $(item).find(".songPart").find(".songLabel")[0];
+					if (!songLinkTag) return;
+
+					var songTitle = songLinkTag.innerHTML;
+					var songStatsLink = rootUrl + $(songLinkTag).attr('href')
+					songs.push( {'title':songTitle, 'statsLink':songStatsLink} );
+				}
+			);
+			setlist.songs = songs;
+
+			var month = $(".dateBlock").find(".m")[0].innerHTML;
+			var day = $(".dateBlock").find(".d")[0].innerHTML;
+			var year = $(".dateBlock").find(".y")[0].innerHTML;
+			setlist.date = new Date(month + " " + day + ", " + year);
+			callback(setlist);
+		},
+		error,
+		setlist.link
+	);
+}
+
+function normalizeSongTitle(name) {
+	return name;
+}
+
+// This is the real secret sauce. Let's...  do something smarter later
+function createHypotheticalSetlistFromPopulatedSetlists (callback, error, setlists) {
+	var songsByPopularity = rankSongsByPlayCount( setlists );
+	var songList = cutSongListToRightLength( songsByPopularity, setlists );
+	songList = sortSongByAveragePosition( songList) ;
+
+	callback(songList);
+}
+
+function rankSongsByPlayCount(setlists) {
+	var songNameToSongObjectMap = {};
+	console.log(setlists.length);
+	for (var i = 0; i < setlists.length; i++) {
+		console.log("setlist " + i);
+		var setlist = setlists[i];
+		for (var j = 0; j < setlist.songs.length; j++) {
+			var song = setlist.songs[j];
+			var title = normalizeSongTitle(song.title);
+
+			if (title in songNameToSongObjectMap) {
+				song = songNameToSongObjectMap[title];
+				song.averagePosition = ((song.averagePosition * song.playCount) + j) / (song.playCount + 1);
+				song.playCount += 1;
+			} else {
+				songNameToSongObjectMap[title] = song;
+				song.averagePosition = j;
+				song.playCount = 1;
+			}
+		};
+	};
+
+	function playCountSort(a, b) {
+		return b.playCount - a.playCount;
+	}
+	var songObjectsWithPlayCounts = languageUtils.dictionaryValues(songNameToSongObjectMap);
+	songObjectsWithPlayCounts.sort(playCountSort);
+	return songObjectsWithPlayCounts;
+}
+
+function cutSongListToRightLength(songList, setlists) {
+	//var idealLength = 15;
+	var meanLength = languageUtils.meanLengthOfNonEmptyArrayAtKeyOnObjects('songs', setlists);
+	var standardDeviationOfLength = languageUtils.standadDeviationOfLengthOfNonEmptyArrayAtKeyOnObjects('songs', setlists);
+	console.log("Mean Length: " + meanLength);
+	console.log("Standard Dev Length: " + standardDeviationOfLength);
+
+	// sort of arbitrary: basically, don't ignore songs you'd likely want to know
+	var idealLength = Math.ceil(meanLength + standardDeviationOfLength);
+	console.log("Trimming to length: " + idealLength);
+
+	songList = songList.slice(0, idealLength);
+	return songList;
+}
+
+function sortSongByAveragePosition(songList) {
+	function averagePositionSort(a, b) {
+		return a.averagePosition - b.averagePosition;
+	}
+	songList.sort(averagePositionSort);
+	return songList;
+}
+
+function createSetlistForArtistName(callback, error, artistName) {
+	getArtistNameSearchLink (
+		function (artistNameSearchLink) {		
+			getSetlistsFromSearchLink (
+				function (setlists) {					
+					console.log(setlists);
+					getDetailsForSetlists (
+						function (setlists) {
+							createHypotheticalSetlistFromPopulatedSetlists(
+								function (newSetlist) {
+									callback(newSetlist);
+								},
+								function (e) {
+									console.log(e);
+								},
+								setlists
+							);
+						},
+						function (e) {
+							console.log("Failed on single setlist parsing");
+							error(e);
+						},
+						setlists
+					);
+				},
+				function (e) {
+					console.log("Error in getSetlistsFromSearchLink");
+					error(e);
 				},
 				artistNameSearchLink
 			);
 		},
-		function(e) {
-			console.log("Error! " + e.toString());
+		function (e) {
+			console.log("Error in getArtistNameSearchLink");
+			error(e);
 		},
-		"nirvana"
+		artistName
 	);
 }
-test();
+exports.createSetlistForArtistName = createSetlistForArtistName;
+
+function test() {
+	var artistName = "The National";
+	createSetlistForArtistName(
+		function (setlist) {
+			console.log(setlist);
+		},
+		function (e) {
+			console.log(e);
+		},
+		artistName
+	);
+}
+//test();
 
 //// TRACK search
 // {

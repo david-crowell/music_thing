@@ -4,7 +4,6 @@ function artist(request, response) {
 	var query = request.query.q;
 
 	spotifyApi.searchForArtist(
-		query,
 		function(artists) {
 			console.log("Success");
 			response.send(artists);
@@ -13,7 +12,8 @@ function artist(request, response) {
 			console.log("ERROR");
 			console.log(e.toString());
 			response.send(e.toString());
-		}
+		},
+		query
 	);
 }
 exports.artist = artist;

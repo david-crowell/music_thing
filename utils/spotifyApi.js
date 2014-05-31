@@ -1,6 +1,125 @@
 var request = require("request");
+var languageUtils = require("./languageUtils");
 
-function searchForTrack(query, callback, error) {
+function searchForTrackByArtistName(callback, error, track, artistName) {
+	var query = encodeURIComponent(track + " " + artistName);
+	var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
+
+	request.get(
+		uri,
+		function (e, response, rawBody) {
+			if (e) {
+				error(e);
+				return;
+			}
+			var body = JSON.parse(rawBody);
+			callback(body.tracks);
+		}
+	);
+}
+exports.searchForTrackByArtistName = searchForTrackByArtistName;
+
+function findTrackByTitleAndArtistName(callback, error, track, artistName) {
+	searchForTrackByArtistName(
+		function(guesses) {
+			var badGuess;
+			for (var i = 0; i < guesses.length; i++) {
+				var guess = guesses[i];
+				if (languageUtils.string.areNoisyEqual( guess.name, track )) {
+					// track name matches
+					if (languageUtils.string.areNoisyEqual( guess.artists[0].name, artistName )) {
+						// and artist name matches: same song
+						var song = {'title': guess.name, 'spotifyUri': guess.href}
+						console.log(song);
+						callback(song);
+						return;
+					} else {
+						if (badGuess == null) {
+							badGuess = guess;
+						}
+					}
+				}
+			}
+			callback(badGuess);
+		},
+		error,
+		track,
+		artistName
+	);
+}
+exports.findTrackByTitleAndArtistName = findTrackByTitleAndArtistName;
+
+function addTrackDataToSongWithArtistName(callback, error, song, artistName) {
+	findTrackByTitleAndArtistName(
+		function (track) {
+			if (track === null) {
+				song.onSpotify = false;
+			} else {
+				song.title = track.title;
+				song.spotifyUri = track.spotifyUri;
+				song.onSpotify = true;
+			}
+			callback(song);
+		},
+		error,
+		song.title,
+		artistName
+	);
+}
+exports.addTrackDataToSongWithArtistName = addTrackDataToSongWithArtistName;
+
+function addTrackDataToSongsWithArtistName(callback, error, songs, artistName) {
+	var toDo = songs.length;
+	var completed = 0;
+
+	function done() {
+		completed += 1;
+		if (completed === toDo) {
+			callback(songs);
+		}
+	}
+	for (var i = 0; i < songs.length; i++) {
+		addTrackDataToSongWithArtistName(
+			function(song) {
+				done();
+			},
+			error,
+			songs[i],
+			artistName
+		);
+	};
+}
+exports.addTrackDataToSongsWithArtistName = addTrackDataToSongsWithArtistName;
+
+function findTracksByTitleAndArtistName(callback, error, tracks, artistName) {
+	var toDo = tracks.length;
+	var next = 0;
+
+	var results = [];
+
+	function doNext() {
+		if (next === toDo) {
+			callback(results);
+		} else {
+			findTrackByTitleAndArtistName(
+				function(track) {
+					results.push(track);
+					next += 1;
+					doNext();
+				},
+				error,
+				tracks[next],
+				artistName
+			);
+		}
+	}
+	doNext();
+}
+exports.findTracksByTitleAndArtistName = findTracksByTitleAndArtistName;
+
+function searchForTrackByArtistSpotifyUri(callback, error, track, artistName){}
+
+function searchForTrack(callback, error, query) {
 	if (query.charAt(0) != '"') {
 		query = '"' + query + '"';
 	}
@@ -20,7 +139,7 @@ function searchForTrack(query, callback, error) {
 }
 exports.searchForTrack = searchForTrack;
 
-function searchForArtist(query, callback, error) {
+function searchForArtist(callback, error, query) {
 	if (query.charAt(0) != '"') {
 		query = '"' + query + '"';
 	}
@@ -41,14 +160,15 @@ function searchForArtist(query, callback, error) {
 exports.searchForArtist = searchForArtist;
 
 function test() {
-	searchForArtist("foo fighters",
-		function(tracks) {		
-			console.log(tracks);
-			console.log(tracks.length + " results!");
+	findTracksByTitleAndArtistName(
+		function(song) {		
+			console.log(song);
 		},
 		function(e) {
 			console.log("Error! " + e.toString());
-		}
+		},
+		["I Should Live In Salt", "Don't Swallow The Cap"],
+		"The National"
 	);
 }
 //test();
