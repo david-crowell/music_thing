@@ -37,6 +37,10 @@ function getArtistNameSearchLink(callback, error, artistName) {
 
 function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 	console.log(artistSearchLink);
+	if (artistSearchLink == undefined) {
+		error("Artist not found");
+		return;
+	}
 	webUtils.fetchPageJqueryDom(
 		function ($, window) {
 			var setlists = [];
