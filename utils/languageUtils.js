@@ -148,3 +148,8 @@ function stringsAreNoisyEqual(first, second) {
 	return (a === b);
 }
 exports.string.areNoisyEqual = stringsAreNoisyEqual;
+
+function fixEncodingErrors(string) {
+	return string.replace(/&amp;/g, "and");
+}
+exports.string.fixEncodingErrors = fixEncodingErrors;

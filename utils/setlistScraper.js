@@ -44,7 +44,7 @@ function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 				function(index, item) {
 					var a = $($(item).find('h2')[0]).find('a')[0];
 					var link = rootUrl + $(a).attr('href');
-					var title = a.innerHTML
+					var title = a.innerHTML;
 					setlists.push( {'title':title, 'link':link} );
 				}
 			);
@@ -88,7 +88,7 @@ function getDetailsForSetlistObject(callback, error, setlist) {
 					var songLinkTag = $(item).find(".songPart").find(".songLabel")[0];
 					if (!songLinkTag) return;
 
-					var songTitle = songLinkTag.innerHTML;
+					var songTitle = languageUtils.string.fixEncodingErrors(songLinkTag.innerHTML);
 					var songStatsLink = rootUrl + $(songLinkTag).attr('href')
 					songs.push( {'title':songTitle, 'statsLink':songStatsLink} );
 				}

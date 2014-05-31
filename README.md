@@ -7,3 +7,5 @@ cp testconfig.js config.js
 Edit config.js to use your echonest API key
 
 foreman start
+
+git push herok heroku:master
