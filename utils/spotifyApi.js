@@ -34,13 +34,19 @@ function findTrackByTitleAndArtistName(callback, error, track, artistName) {
 						callback(song);
 						return;
 					} else {
-						if (badGuess == null) {
+						if (badGuess === null || badGuess === undefined) {
 							badGuess = guess;
 						}
 					}
 				}
 			}
-			callback(badGuess);
+			if (badGuess === null || badGuess === undefined) {
+				callback(null);
+				return;
+			};
+			var song = {'title': badGuess.name, 'spotifyUri': badGuess.href}
+			console.log(song);
+			callback(song);
 		},
 		error,
 		track,

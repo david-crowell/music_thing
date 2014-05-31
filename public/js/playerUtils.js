@@ -49,17 +49,6 @@ function getSuggestionsFromSearchbar(event, callback) {
     );
 }
 
-function updatePlayer(spotifyUri) {
-    var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
-    console.log(uri);
-    $("#spotify_widget").get(0).contentWindow.location.replace(uri); 
-    //$("#spotify_widget").attr('src', uri);
-}
-
-function clearPlayer() {
-    $("#spotify_widget").get(0).contentWindow.location.replace("about:blank");  
-}
-
 function matchArtist(query, artists) {
     var bestGuess = artists[0];
     for (var i = artists.length - 1; i >= 0; i--) {
@@ -71,12 +60,13 @@ function matchArtist(query, artists) {
 }
 
 function loadArtist(query) {
+    clearPlayer();
     getArtistSpotifyInfo (      
         function (artists) {                        
             var artist = matchArtist(query, artists);
             var artistUri = artist.href;
             console.log(artistUri);
-            updatePlayer(artistUri);
+            updatePlayer(artist.name, artistUri);
             clearSimilarArtists();
             loadSimilarArtists(artist.name);
             loadPerformances(artist.name);

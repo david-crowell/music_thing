@@ -7,25 +7,31 @@ a {
   color: #00B7FF;
 }
 
+::-webkit-scrollbar { 
+    display: none; 
+}
+
 .clear { clear: both;}			
 
-#left_column { width: 350px; border: 0px; float: left; height: 560px; overflow:hidden ;margin-right: 5px }
-#middle_column { width: 350px; border: 0px; float: left; height: 560px; overflow: scroll;}
-#right_column { width: 350px; border: 0px; float: left;  height: 560px; overflow:hidden; margin-left: 5px}
+#left_column { width: 355px; border: 0px; float: left; height: 600px; overflow:hidden; margin-right: 5px }
+#middle_column { width: 355px; border: 0px; float: left; height: 600px; overflow:hidden;}
+#right_column { width: 355px; border: 0px; float: left;  height: 600px; overflow:hidden; margin-left: 5px}
 
 #wrapper{
-   width:1060px;
+   width:1080px;
    margin:0 auto;
 }
 
 #similar_artists_wrapper{
-	height:420px;
-	overflow: scroll;
+	height:480px;
+	overflow-y: scroll;	
+	overflow-x: hidden;
 }
 
 #performances_wrapper{
-	height:420px;
-	overflow: scroll;	
+	height:480px;
+	overflow-y: scroll;	
+	overflow-x: hidden;
 }
 
 .performance_artists{
@@ -45,6 +51,16 @@ table {
 tr.border_bottom td{
     border-bottom: 1px solid #dddddd;
     padding-top: 10px;
+}
+
+h2 {
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+h4 {
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
 }
 
 ul {

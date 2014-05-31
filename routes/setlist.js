@@ -4,6 +4,8 @@ var spotifyApi = require('../utils/spotifyApi.js');
 
 function cleanSongObject(song) {
 	delete song.statsLink;
+	delete song.playCount;
+	delete song.averagePosition;
 	return song;
 }
 

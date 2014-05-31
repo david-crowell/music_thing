@@ -106,3 +106,25 @@ function getLocalPerformances(callback, error, postal_code) {
         }
     );  
 }
+
+function getPredictedSetlist(callback, error, artistName) {
+	if (artistName == null) { return; }
+	var uri = "setlist?artistName=" + artistName;
+
+	var xhr = $.ajax( uri )
+    .done(
+        function (setlist) {
+            console.log(setlist);   
+            if (setlist == null || setlist.length == 0) {
+            	error("No setlist found");
+            } else {
+	            callback(setlist);
+	        }
+        }
+    ).fail(
+        function (e) {
+            console.log(e);
+            error(e);
+        }
+    ); 
+}

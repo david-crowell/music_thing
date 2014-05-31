@@ -36,3 +36,14 @@ function showPerformances(performances) {
     addSameArtistNearbyPerformances(performances);
     addSameArtistAllPerformances(performances);
 }
+
+function updatePlayer(artistName, spotifyUri) {
+    var uri = "http://embed.spotify.com/?uri=" + spotifyUri;
+    console.log(uri);
+    $("#spotify_widget").get(0).contentWindow.location.replace(uri); 
+    //$("#spotify_widget").attr('src', uri);
+}
+
+function clearPlayer() {
+    $("#spotify_widget").get(0).contentWindow.location.replace("about:blank");  
+}
