@@ -4,6 +4,8 @@ process.env.PWD = process.cwd()
  * Module dependencies.
  */
 
+require('v8-profiler');
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
@@ -17,7 +19,9 @@ var express = require('express')
   , lastfm = require('./routes/lastfm')
   , setlist = require('./routes/setlist')
 
+
 var app = express();
+exports.app = app;
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -47,7 +51,16 @@ app.get('/', discover.index);
 app.post('/tags', lastfm.tags);
 app.post('/similar', echonest.similarPost);
 app.get('/setlist', setlist.createSetlist);
+app.get('/setlist/embed', setlist.getEmbedCodeForSetlist);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
+var server;
+function startServer(){
+  server = http.createServer(app);
+  server.listen(app.get('port'), function(){
+    console.log("Express server listening on port " + app.get('port'));
+  });
+  exports.server = server;
+}
+exports.startServer = startServer;
+startServer();
+exports.server = server;

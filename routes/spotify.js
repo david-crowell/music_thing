@@ -5,7 +5,6 @@ function artist(request, response) {
 
 	spotifyApi.searchForArtist(
 		function(artists) {
-			console.log("Success");
 			response.send(artists);
 		},
 		function(e) {

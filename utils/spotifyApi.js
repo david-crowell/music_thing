@@ -30,7 +30,6 @@ function findTrackByTitleAndArtistName(callback, error, track, artistName) {
 					if (languageUtils.string.areNoisyEqual( guess.artists[0].name, artistName )) {
 						// and artist name matches: same song
 						var song = {'title': guess.name, 'spotifyUri': guess.href}
-						console.log(song);
 						callback(song);
 						return;
 					} else {
@@ -45,7 +44,6 @@ function findTrackByTitleAndArtistName(callback, error, track, artistName) {
 				return;
 			};
 			var song = {'title': badGuess.name, 'spotifyUri': badGuess.href}
-			console.log(song);
 			callback(song);
 		},
 		error,
@@ -82,7 +80,8 @@ function addTrackDataToSongsWithArtistName(callback, error, songs, artistName) {
 	function done() {
 		completed += 1;
 		if (completed === toDo) {
-			callback(songs);
+			callback();
+			songs = null;
 		}
 	}
 	for (var i = 0; i < songs.length; i++) {
