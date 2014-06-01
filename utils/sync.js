@@ -45,33 +45,34 @@ function parallelSaveResults(callback, error, functions, nonCallbackErrorArgumen
  *   - the arguments each member of functions passes to its callbacks will be returned in parallelSaveCallbackArgs's callback
  *     - that callback will get one argument, a dictionary mapping 
  *       - key = (a string of) the index of the function that generated these callback arguments
- * 		 - value = a dictionary mapping (a string of) the arg index to the arg
+ *       - value = a dictionary mapping (a string of) the arg index to the arg
  *
  * Example:
  *   parallelSaveCallbackArgs(  
- *	 	yourCallback, 
- * 		yourError, 
- *		[
- *			function(callback, error, val){
- *				callback(Math.ceil(val));
- *			},
- *			function(callback, error, a, b){
- *				callback(Math.pow(a,b));
- *			}
- *		], 
- *		[
- *			[.1], 
- *			[3,2]
- *		] 
- *	);
- *	 runs the Match.ceil(.1) wrapper and Math.pow(3,2) wrapper in as close to parallel as node has
+ *      yourCallback, 
+ *      yourError, 
+ *      [
+ *          function(callback, error, val){
+ *              callback(Math.ceil(val));
+ *          },
+ *          function(callback, error, a, b){
+ *              callback(Math.pow(a,b));
+ *          }
+ *      ], 
+ *      [
+ *          [.1], 
+ *          [3,2]
+ *      ] 
+ *   );
+ *   
+ *   runs the Match.ceil(.1) wrapper and Math.pow(3,2) wrapper in as close to parallel as node has
  *   you get back:
- *	{
- *		"0": ["0":1],
- *	 	"1": ["0":9]
- *	 }
+ *  
+ *  {
+ *      "0": ["0":1],
+ *      "1": ["0":9]
+ *  }
  */
-
 function parallelSaveCallbackArgs(callback, error, functions, nonCallbackErrorArguments) {
 	var completed = 0;
 	var toDo = functions.length;
