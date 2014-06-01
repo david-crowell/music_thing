@@ -3,9 +3,7 @@ process.env.PWD = process.cwd()
 /**
  * Module dependencies.
  */
-
-require('v8-profiler');
-
+ 
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
