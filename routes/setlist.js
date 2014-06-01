@@ -15,34 +15,17 @@ function createSetlist(request, response) {
 
 	if (artistName != undefined && artistName != null) {
 		// we're going by artistName 
-		setlistScraper.createSetlistForArtistName(
+		createSetlistOfSongs(
 			function (setlist) {
-				//response.send(setlist);
-				console.log("Got setlist");
-				spotifyApi.addTrackDataToSongsWithArtistName(
-					function (setlist) {
-						for (var i = 0; i < setlist.length; i++) {
-							var song = setlist[i];
-							cleanSongObject(song);
-							setlist[i] = song;
-						};
-						response.send(setlist);
-					},
-					function (e) {
-						console.log("ERROR");
-						console.log(e.toString());
-						response.send(e.toString());
-					}, 
-					setlist,
-					artistName
-				);
+				response.send(setlist);
 			},
 			function (e) {
 				console.log("ERROR");
 				console.log(e.toString());
 				response.send(e.toString());
 			},
-			artistName
+			artistName,
+			null
 		);
 	} else if (artistSpotifyId != undefined && artistSpotifyId != null) {
 		response.send("Not yet implemented!");
@@ -51,3 +34,70 @@ function createSetlist(request, response) {
 	}
 }
 exports.createSetlist = createSetlist;
+
+function createSetlistOfSongs(callback, error, artistName, artistSpotifyId) {
+	// we're going by artistName 
+	setlistScraper.createSetlistForArtistName(
+		function (setlist) {
+			//response.send(setlist);
+			console.log("Got setlist");
+			spotifyApi.addTrackDataToSongsWithArtistName(
+				function (setlist) {
+					for (var i = 0; i < setlist.length; i++) {
+						var song = setlist[i];
+						cleanSongObject(song);
+						setlist[i] = song;
+					};
+					callback(setlist);
+					return;
+					//response.send(setlist);
+				},
+				function (e) {
+					console.log("ERROR");
+					console.log(e.toString());
+					error(e);
+					return;
+					//response.send(e.toString());
+				}, 
+				setlist,
+				artistName
+			);
+		},
+		function (e) {
+			console.log("ERROR");
+			console.log(e.toString());
+			//response.send(e.toString());
+			error(e);
+			return;
+		},
+		artistName
+	);
+}
+
+function getEmbedCodeForSetlist(request, response) {
+	var artistName = request.query.artistName;
+	var artistSpotifyId = request.query.artistSpotifyId;
+	createSetlistOfSongs(
+		function (setlist) {
+			var uri = "http://embed.spotify.com/?uri=spotify:trackset:" + encodeURIComponent(artistName + " Setlist") + ":";
+			for (var i = 0; i < setlist.length; i++) {
+			    var song = setlist[i];
+			    if (song.onSpotify == false) continue;
+			    
+			    var spotifyId = song.spotifyUri.split(':').pop();
+			    uri += spotifyId;
+
+			    if (i <= setlist.length - 2) {
+			        // it's not the last one
+			        uri += ",";
+			    }
+			};
+			response.send(uri);
+		},
+		function (e) {
+			response.send("Blame Dave for this one");
+		},
+		artistName
+	);
+}
+exports.getEmbedCodeForSetlist = getEmbedCodeForSetlist;

@@ -47,6 +47,7 @@ app.get('/', discover.index);
 app.post('/tags', lastfm.tags);
 app.post('/similar', echonest.similarPost);
 app.get('/setlist', setlist.createSetlist);
+app.get('/setlist/embed', setlist.getEmbedCodeForSetlist);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
