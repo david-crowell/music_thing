@@ -18,6 +18,8 @@ function createSetlist(request, response) {
 		createSetlistOfSongs(
 			function (setlist) {
 				response.send(setlist);
+				delete setlist;
+				return;
 			},
 			function (e) {
 				console.log("ERROR");
@@ -93,6 +95,7 @@ function getEmbedCodeForSetlist(request, response) {
 			    }
 			};
 			response.send(uri);
+			delete setlist;
 		},
 		function (e) {
 			response.send("Blame Dave for this one");

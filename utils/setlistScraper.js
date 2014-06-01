@@ -36,7 +36,6 @@ function getArtistNameSearchLink(callback, error, artistName) {
 }
 
 function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
-	console.log(artistSearchLink);
 	if (artistSearchLink == undefined) {
 		error("Artist not found");
 		return;
@@ -83,7 +82,6 @@ function getDetailsForSetlists(callback, error, setlists) {
 
 // sets setlsit.songs and setlist.date
 function getDetailsForSetlistObject(callback, error, setlist) {
-	console.log(setlist);
 	webUtils.fetchPageJqueryDom(
 		function ($, window) {
 			var songs = [];
@@ -125,7 +123,6 @@ function createHypotheticalSetlistFromPopulatedSetlists (callback, error, setlis
 
 function rankSongsByPlayCount(setlists) {
 	var songNameToSongObjectMap = {};
-	console.log(setlists.length);
 	for (var i = 0; i < setlists.length; i++) {
 		var setlist = setlists[i];
 		for (var j = 0; j < setlist.songs.length; j++) {
@@ -161,7 +158,6 @@ function cutSongListToRightLength(songList, setlists) {
 
 	// sort of arbitrary: basically, don't ignore songs you'd likely want to know
 	var idealLength = Math.ceil(meanLength + standardDeviationOfLength);
-	console.log("Trimming to length: " + idealLength);
 
 	songList = songList.slice(0, idealLength);
 	return songList;
@@ -180,7 +176,6 @@ function createSetlistForArtistName(callback, error, artistName) {
 		function (artistNameSearchLink) {		
 			getSetlistsFromSearchLink (
 				function (setlists) {					
-					console.log(setlists);
 					getDetailsForSetlists (
 						function (setlists) {
 							createHypotheticalSetlistFromPopulatedSetlists(
@@ -188,7 +183,7 @@ function createSetlistForArtistName(callback, error, artistName) {
 									callback(newSetlist);
 								},
 								function (e) {
-									console.log(e);
+									console.log(e.toString());
 								},
 								setlists
 							);
