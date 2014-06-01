@@ -43,10 +43,15 @@
 
                 <div id="middle_column">
                     <div class="column_label"><h2>Music</h2></div>
-                    <h4> Most Popular Songs </h1>
-                    <iframe id="spotify_widget" src="about:blank" width="293" height="80" frameborder="0" allowtransparency="true"></iframe>
-                    <h4> Predicted Setlist </h1>
-                    <iframe id="setlist_spotify_widget" src="html/defaultSpotifyWidget.html" width="300" height="380" frameborder="0" allowtransparency="true"></iframe> 
+                    <div id="music_wrapper">
+                        <h4> Most Popular Songs </h4>
+                        <iframe id="spotify_widget" src="about:blank" width="293" height="80" frameborder="0" allowtransparency="true"></iframe>
+                        <h4> Predicted Setlist </h4>
+                        <iframe id="setlist_spotify_widget" src="html/defaultSpotifyWidget.html" width="300" height="300" frameborder="0" allowtransparency="true"></iframe> 
+                    </div>
+                    <div class="attribution" id="setlist_attribution">
+                        <span>Powered by concert setlists on </span><a href="http://www.setlist.fm/" alt="setlist.fm"><span>setlist.fm</span></a>
+                    </div> 
                 </div>    
 
                 <div id="right_column">

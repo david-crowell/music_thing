@@ -34,6 +34,12 @@ a {
 	overflow-x: hidden;
 }
 
+#music_wrapper{
+	height:480px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
 .performance_artists{
 	float: right;
 	width: 120px;
@@ -87,6 +93,10 @@ li {
 
 .attribution {
 	margin-top: 10px
+}
+
+#setlist_attribution{
+	margin-top: 26px
 }
 
 #postal_code_setting {
