@@ -53,14 +53,12 @@ function createSetlistOfSongs(callback, error, artistName, artistSpotifyId) {
 					};
 					callback(setlist);
 					return;
-					//response.send(setlist);
 				},
 				function (e) {
 					console.log("ERROR");
 					console.log(e.toString());
 					error(e);
 					return;
-					//response.send(e.toString());
 				}, 
 				setlist,
 				artistName
@@ -69,7 +67,6 @@ function createSetlistOfSongs(callback, error, artistName, artistSpotifyId) {
 		function (e) {
 			console.log("ERROR");
 			console.log(e.toString());
-			//response.send(e.toString());
 			error(e);
 			return;
 		},

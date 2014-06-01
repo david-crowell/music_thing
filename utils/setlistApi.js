@@ -20,7 +20,7 @@ function getArtistProperNameAndIds(callback, error, artistName) {
 }
 
 // artistWithIds is {'name': , 'musicbrainzId': , 'spotifyId': }
-// callsback with 
+// callsback with setlists as defined by setlist.fm
 function getRawSetlistsFromArtistWithIds(callback, error, artistWithIds) {
 	if (artistWithIds.musicbrainzId == undefined) {
 		error("Artist not found: " + artistWithIds);
@@ -41,25 +41,6 @@ function getRawSetlistsFromArtistWithIds(callback, error, artistWithIds) {
 			callback(setlistObjects);
 		}
 	);
-
-	/*
-	webUtils.fetchPageJqueryDom(
-		function ($, window) {
-			var setlists = [];
-			$(".listSetlists").find(".setlistPreview").each(
-				function(index, item) {
-					var a = $($(item).find('h2')[0]).find('a')[0];
-					var link = rootUrl + $(a).attr('href');
-					var title = a.innerHTML;
-					setlists.push( {'title':title, 'link':link} );
-				}
-			);
-			callback(setlists);
-		},
-		error,
-		artistSearchLink.link
-	);
-	*/
 }
 
 function rawSetlistContainsSongs(rawSetlist) {
@@ -135,13 +116,6 @@ function normalizeSongTitle(name) {
 	return name;
 }
 
-
-
-
-
-
-
-
 // This is the real secret sauce. Let's...  do something smarter later
 function createHypotheticalSetlistFromPopulatedSetlists (callback, error, setlists) {
 	var songsByPopularity = rankSongsByPlayCount( setlists );
@@ -181,7 +155,6 @@ function rankSongsByPlayCount(setlists) {
 }
 
 function cutSongListToRightLength(songList, setlists) {
-	//var idealLength = 15;
 	var meanLength = languageUtils.meanLengthOfNonEmptyArrayAtKeyOnObjects('songs', setlists);
 	var standardDeviationOfLength = languageUtils.standadDeviationOfLengthOfNonEmptyArrayAtKeyOnObjects('songs', setlists);
 	console.log("Mean Length: " + meanLength);
@@ -242,54 +215,8 @@ function createSetlistForArtistName(callback, error, artistName) {
 		},
 		artistName
 	);
-
-
-	/*
-	getArtistNameSearchLink (
-		function (artistNameSearchLink) {		
-			getSetlistsFromSearchLink (
-				function (setlists) {					
-					console.log(setlists);
-					getDetailsForSetlists (
-						function (setlists) {
-							createHypotheticalSetlistFromPopulatedSetlists(
-								function (newSetlist) {
-									callback(newSetlist);
-								},
-								function (e) {
-									console.log(e);
-								},
-								setlists
-							);
-						},
-						function (e) {
-							console.log("Failed on single setlist parsing");
-							error(e);
-						},
-						setlists
-					);
-				},
-				function (e) {
-					console.log("Error in getSetlistsFromSearchLink");
-					error(e);
-				},
-				artistNameSearchLink
-			);
-		},
-		function (e) {
-			console.log("Error in getArtistNameSearchLink");
-			error(e);
-		},
-		artistName
-	);
-	*/
 }
 exports.createSetlistForArtistName = createSetlistForArtistName;
-
-
-
-
-
 
 
 function test() {
