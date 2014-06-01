@@ -1,5 +1,5 @@
 var echonestApi = require('../utils/echonestApi.js');
-var setlistScraper = require('../utils/setlistScraper.js');
+var setlistApi = require('../utils/setlistApi.js');
 var spotifyApi = require('../utils/spotifyApi.js');
 
 function cleanSongObject(song) {
@@ -19,6 +19,7 @@ function createSetlist(request, response) {
 			function (setlist) {
 				response.send(setlist);
 				delete setlist;
+				setlist = null;
 				return;
 			},
 			function (e) {
@@ -39,12 +40,12 @@ exports.createSetlist = createSetlist;
 
 function createSetlistOfSongs(callback, error, artistName, artistSpotifyId) {
 	// we're going by artistName 
-	setlistScraper.createSetlistForArtistName(
+	setlistApi.createSetlistForArtistName(
 		function (setlist) {
 			//response.send(setlist);
 			console.log("Got setlist");
 			spotifyApi.addTrackDataToSongsWithArtistName(
-				function (setlist) {
+				function () {
 					for (var i = 0; i < setlist.length; i++) {
 						var song = setlist[i];
 						cleanSongObject(song);

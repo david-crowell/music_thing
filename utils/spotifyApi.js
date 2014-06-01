@@ -80,7 +80,8 @@ function addTrackDataToSongsWithArtistName(callback, error, songs, artistName) {
 	function done() {
 		completed += 1;
 		if (completed === toDo) {
-			callback(songs);
+			callback();
+			songs = null;
 		}
 	}
 	for (var i = 0; i < songs.length; i++) {

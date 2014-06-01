@@ -18,6 +18,7 @@ function searchForArtist(callback, error, url) {
 				}
 			);
 			callback(artistNameSearchLinksList);
+			artistNameSearchLinksList = null;
 		},
 		error,
 		url
@@ -52,6 +53,7 @@ function getSetlistsFromSearchLink(callback, error, artistSearchLink) {
 				}
 			);
 			callback(setlists);
+			setlists = null;
 		},
 		error,
 		artistSearchLink.link
@@ -66,7 +68,8 @@ function getDetailsForSetlists(callback, error, setlists) {
 	function done() {
 		completed += 1;
 		if (completed === toDo) {
-			callback(setlists);
+			callback();
+			setlists = null;
 		}
 	}
 	for (var i = 0; i < setlists.length; i++) {
@@ -177,7 +180,7 @@ function createSetlistForArtistName(callback, error, artistName) {
 			getSetlistsFromSearchLink (
 				function (setlists) {					
 					getDetailsForSetlists (
-						function (setlists) {
+						function () {
 							createHypotheticalSetlistFromPopulatedSetlists(
 								function (newSetlist) {
 									callback(newSetlist);
