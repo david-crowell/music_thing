@@ -36,7 +36,15 @@ function getRawSetlistsFromArtistWithIds(callback, error, artistWithIds) {
 				error(e);
 				return;
 			}
-			var body = JSON.parse(rawBody);
+			var body;
+			try {
+				body = JSON.parse(rawBody);
+			} catch (e) {
+				console.log("Error parsing setlist json");
+				console.log(rawBody);
+				error(e);
+				return;
+			}
 			var setlistObjects = body.setlists.setlist;
 			callback(setlistObjects);
 		}
