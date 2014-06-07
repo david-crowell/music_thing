@@ -9,6 +9,10 @@ var rootUrl = "http://www.setlist.fm/";
 function getArtistProperNameAndIds(callback, error, artistName) {
 	echonestApi.artistLimitedProfile(
 		function(echonestArtist) {
+			if (echonestArtist == null) {
+				error("Artist not found");
+				return;
+			}
 			var name = echonestArtist.name;
 			var musicbrainzId = echonestApi.extractMusicbrainzId(echonestArtist);
 			var spotifyId = echonestApi.extractSpotifyId(echonestArtist);
