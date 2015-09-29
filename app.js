@@ -5,6 +5,11 @@ process.env.PWD = process.cwd()
  */
  
 var express = require('express')
+  , favicon = require('serve-favicon')
+  , logger = require('logger')
+  , bodyParser = require('body-parser')
+  , methodOverride = require('method-override')
+  , errorHandler = require('error-handler')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
@@ -21,21 +26,21 @@ var express = require('express')
 var app = express();
 exports.app = app;
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(process.env.PWD + '/public'));
-});
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(favicon(process.env.PWD + '/public/img/favicon.png'));
+//app.use(logger());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(express.static(process.env.PWD + '/public'));
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
+if ('development' == app.get('env')) {
+  //app.use(errorHandler());
+}
 
 app.get('/suggest', echonest.suggest);
 app.get('/similar', echonest.similar);

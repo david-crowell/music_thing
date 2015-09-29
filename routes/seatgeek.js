@@ -83,7 +83,7 @@ function getLocalEventsByIp(request, response) {
 
 	var ip = getClientIp(request);
 	console.log(ip);
-	if (ip === "127.0.0.1") { ip = "18.10.0.1";} //generic MIT-block address
+	if (ip == null || ip === "::1" || ip === "127.0.0.1") { ip = "18.10.0.1";} //generic MIT-block address
 
 	seatgeekApi.findSeatGeekEventsNearIp(		
 		function(events) {

@@ -5,6 +5,6 @@ function index(request, response) {
 		pwd = process.cwd()
 		console.log(pwd);
 	}
-	response.sendfile(pwd + "/public/html/discover.html");
+	response.sendFile(pwd + "/public/html/discover.html");
 }
 exports.index = index;
