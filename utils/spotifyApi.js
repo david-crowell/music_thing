@@ -3,7 +3,8 @@ var languageUtils = require("./languageUtils");
 
 function searchForTrackByArtistName(callback, error, track, artistName) {
 	var query = encodeURIComponent(track + " " + artistName);
-	var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
+	//var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
+	var uri = "http://api.spotify.com/v1/search?type=track&q=" + query;
 
 	request.get(
 		uri,
@@ -14,7 +15,7 @@ function searchForTrackByArtistName(callback, error, track, artistName) {
 			}
 			try {
 				var body = JSON.parse(rawBody);
-				callback(body.tracks);
+				callback(body.tracks.items);
 			} 
 			catch(e) {
 				console.log(e);
@@ -36,7 +37,7 @@ function findTrackByTitleAndArtistName(callback, error, track, artistName) {
 					// track name matches
 					if (languageUtils.string.areNoisyEqual( guess.artists[0].name, artistName )) {
 						// and artist name matches: same song
-						var song = {'title': guess.name, 'spotifyUri': guess.href}
+						var song = {'title': guess.name, 'spotifyUri': guess.uri}
 						callback(song);
 						return;
 					} else {
@@ -50,7 +51,7 @@ function findTrackByTitleAndArtistName(callback, error, track, artistName) {
 				callback(null);
 				return;
 			};
-			var song = {'title': badGuess.name, 'spotifyUri': badGuess.href}
+			var song = {'title': badGuess.name, 'spotifyUri': badGuess.uri}
 			callback(song);
 		},
 		error,
@@ -143,82 +144,3 @@ function searchForArtist(callback, error, query) {
 	);
 }
 exports.searchForArtist = searchForArtist;
-
-function test() {
-	findTracksByTitleAndArtistName(
-		function(song) {		
-			console.log(song);
-		},
-		function(e) {
-			console.log("Error! " + e.toString());
-		},
-		["I Should Live In Salt", "Don't Swallow The Cap"],
-		"The National"
-	);
-}
-//test();
-
-//// TRACK search
-// {
-//     "info": {
-//         "num_results": 425,
-//         "limit": 100,
-//         "offset": 0,
-//         "query": "kaizers orchestra",
-//         "type": "track",
-//         "page": 1
-//     },
-//     "tracks": [
-//         {
-//             "album": {
-//                 "released": "2010",
-//                 "href": "spotify:album:5AN6A9IR1g1xRgY0RoKOsT",
-//                 "name": "Hjerteknuser",
-//                 "availability": {
-//                     "territories": "NO"
-//                 }
-//             },
-//             "name": "Hjerteknuser",
-//             "popularity": "0.63",
-//             "external-ids": [
-//                 {
-//                     "type": "isrc",
-//                     "id": "NOHDL1002070"
-//                 }
-//             ],
-//             "length": 199.407,
-//             "href": "spotify:track:6dKWi7apHjn2W7Ojncv4Wu",
-//             "artists": [
-//                 {
-//                     "href": "spotify:artist:1s1DnVoBDfp3jxjjew8cBR",
-//                     "name": "Kaizers Orchestra"
-//                 }
-//             ],
-//             "track-number": "1"
-//         }
-//     ]
-// }
-
-//// ARTIST search
-// {
-//     "info": {
-//         "num_results": 21,
-//         "limit": 100,
-//         "offset": 0,
-//         "query": "nirvana",
-//         "type": "artist",
-//         "page": 1
-//     },
-//     "artists": [
-//         {
-//             "href": "spotify:artist:6olE6TJLqED3rqDCT0FyPh",
-//             "name": "Nirvana",
-//             "popularity": "0.66"
-//         },
-//         {
-//             "href": "spotify:artist:3sS2Q1UZuUXL7TZSbQumDI",
-//             "name": "Approaching Nirvana",
-//             "popularity": "0.31"
-//         }
-//     ]
-// }
