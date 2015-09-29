@@ -12,8 +12,15 @@ function searchForTrackByArtistName(callback, error, track, artistName) {
 				error(e);
 				return;
 			}
-			var body = JSON.parse(rawBody);
-			callback(body.tracks);
+			try {
+				var body = JSON.parse(rawBody);
+				callback(body.tracks);
+			} 
+			catch(e) {
+				console.log(e);
+				console.log(body);
+				error(e);
+			}
 		}
 	);
 }
