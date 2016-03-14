@@ -18,7 +18,6 @@ function similarArtists(callback, error, query, limit, start) {
 
 	var uri = "http://developer.echonest.com/api/v4/artist/similar?api_key=" + API_KEY + "&format=json&results=" + limit + "&start=" + start + "&name=" + query + "&bucket=id:spotify-WW";
 
-
 	request.get(
 		uri,
 		function (e, response, rawBody) {

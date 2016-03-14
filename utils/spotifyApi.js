@@ -3,7 +3,6 @@ var languageUtils = require("./languageUtils");
 
 function searchForTrackByArtistName(callback, error, track, artistName) {
 	var query = encodeURIComponent(track + " " + artistName);
-	//var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
 	var uri = "http://api.spotify.com/v1/search?type=track&q=" + query;
 
 	request.get(
@@ -109,7 +108,7 @@ function searchForTrack(callback, error, query) {
 	if (query.charAt(0) != '"') {
 		query = '"' + query + '"';
 	}
-	var uri = "http://ws.spotify.com/search/1/track.json?q=" + query;
+	var uri = "https://api.spotify.com/v1/search?type=track&q=" + query;
 
 	request.get(
 		uri,
@@ -118,6 +117,7 @@ function searchForTrack(callback, error, query) {
 				error(e);
 				return;
 			}
+			console.log(rawBody);
 			var body = JSON.parse(rawBody);
 			callback(body.tracks);
 		}
@@ -129,7 +129,7 @@ function searchForArtist(callback, error, query) {
 	if (query.charAt(0) != '"') {
 		query = '"' + query + '"';
 	}
-	var uri = "http://ws.spotify.com/search/1/artist.json?q=" + query;
+	var uri = "https://api.spotify.com/v1/search?type=artist&q=" + query;
 
 	request.get(
 		uri,
@@ -139,7 +139,7 @@ function searchForArtist(callback, error, query) {
 				return;
 			}
 			var body = JSON.parse(rawBody);
-			callback(body.artists);
+			callback(body.artists.items);
 		}
 	);
 }

@@ -5,12 +5,15 @@ var echonestApi = require("./echonestApi");
 
 var rootUrl = "http://www.setlist.fm/";
 
+const ArtistNotFound = "Artist not found";
+exports.ArtistNotFound = ArtistNotFound;
+
 // callback with {'name': , 'musicbrainzId': , 'spotifyId': }
 function getArtistProperNameAndIds(callback, error, artistName) {
 	echonestApi.artistLimitedProfile(
 		function(echonestArtist) {
 			if (echonestArtist == null) {
-				error("Artist not found");
+				error(ArtistNotFound);
 				return;
 			}
 			var name = echonestArtist.name;
@@ -80,7 +83,6 @@ function processSetlists(callback, error, rawSetlists) {
 			break;
 		}
 	};
-	//console.log(processedSetlists);
 	callback(processedSetlists);
 }
 
@@ -110,15 +112,18 @@ function processSetlist(rawSetlist) {
 		for (var i = 0; i < sets.length; i++) {
 			var set = sets[i];
 			var rawSongs = set.song;
-			for (var i = 0; i < rawSongs.length; i++) {
-				songs.push({'title':rawSongs[i]["@name"]});
-				//songs.push(rawSongs[i]["@name"]);
-			};
+
+			if (rawSongs.length === undefined) {
+				songs.push({'title':rawSongs["@name"]});
+			} else {
+				for (var i = 0; i < rawSongs.length; i++) {
+					songs.push({'title':rawSongs[i]["@name"]});
+				};
+			}
 		};
 	}
 	if (songs.length == 0) {
 		console.log(sets);
-		console.log("$$$$$$$$$$$$$$$$$$$$$$$");
 	}
 	return { 'songs': songs, 'date' : getDateFromRawSetlist(rawSetlist) };
 }
@@ -139,7 +144,6 @@ function createHypotheticalSetlistFromPopulatedSetlists (callback, error, setlis
 
 function rankSongsByPlayCount(setlists) {
 	var songNameToSongObjectMap = {};
-	console.log(setlists.length);
 	for (var i = 0; i < setlists.length; i++) {
 		var setlist = setlists[i];
 		for (var j = 0; j < setlist.songs.length; j++) {
@@ -193,7 +197,6 @@ function createSetlistForArtistName(callback, error, artistName) {
 		function (artistWithIds){
 			getRawSetlistsFromArtistWithIds(
 				function (rawSetlists) {
-					//console.log(rawSetlists);
 					processSetlists(
 						function (setlists) {
 							createHypotheticalSetlistFromPopulatedSetlists(

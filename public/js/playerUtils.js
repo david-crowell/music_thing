@@ -32,7 +32,6 @@ function loadArtistFromHash() {
         hash = hash.substring(1,hash.length);
     }
     $("#artist_search").val(hash);
-    console.log(hash);
     loadArtist(hash);
 }
 
@@ -64,8 +63,7 @@ function loadArtist(query) {
     getArtistSpotifyInfo (      
         function (artists) {                        
             var artist = matchArtist(query, artists);
-            var artistUri = artist.href;
-            console.log(artistUri);
+            var artistUri = artist.external_urls.spotify;
             updatePlayer(artist.name, artistUri);
             clearSimilarArtists();
             loadSimilarArtists(artist.name);
@@ -83,21 +81,16 @@ function loadArtist(query) {
 }
 
 function useSelection(query) {
-    console.log("Got to USE SELECTION");
-    console.log(query);
-    //loadArtist(query);
     window.location.hash = '#' + query;
 }
 
 function menuUsedForSelection(event, ui) {
     var query = ui.item.value;
-    console.log(query);
     useSelection(query);
 }
 
 function enterUsedForSelection() {
     var query = $("#artist_search").val();
-    //$("#artist_search").autocomplete("close");        
     useSelection(query);
 }
 
@@ -120,10 +113,8 @@ function artistHasSpotifyListings(artist) {
 
 function getSimilarArtistsPlayButtonHtml(artist) {
     if (artistHasSpotifyListings(artist)) {
-        //return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Play</a>';
         return '<a href="#' + artist.name + '">Play</a>';
     } else {
-        //return '<a href="#" onclick="javascript:makeSelection(' + "'" + artist.name + "'" + '); return false;">Show</a>';
         return '<a href="#' + artist.name + '">Show</a>';
     }
 }
@@ -150,7 +141,6 @@ function loadSimilarArtists(query) {
             for (var i = 0; i < artists.length; i++) {
                 artists[i].similarArtistIndex = i;            
             };
-            console.log(artists);
             showSimilarArtists(artists);
         },
         function(e) {
@@ -223,7 +213,6 @@ function addMissedArtists(title, performers) {
     if (performers.length == 0) {return title;}
     title = title + " (with ";
     for (var i = 0; i < performers.length; i++) {
-        console.log(performers[i].name);
         title = title + " " + getPerformerLink( performers[i] ) + ",";
     };
     title = title.slice(0,title.length - 1);

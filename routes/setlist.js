@@ -65,6 +65,9 @@ function createSetlistOfSongs(callback, error, artistName, artistSpotifyId) {
 			);
 		},
 		function (e) {
+			if (e == setlistApi.ArtistNotFound) {
+				return;
+			}
 			console.log("ERROR");
 			console.log(e.toString());
 			error(e);
